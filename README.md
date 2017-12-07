@@ -12,3 +12,4 @@ found 31 classes
 writed file doc/swoole.ide.php
 ```
 
+for simple use you can just save [https://raw.githubusercontent.com/nisnaker/ide-helper-generator/master/doc/swoole.ide.php](https://raw.githubusercontent.com/nisnaker/ide-helper-generator/master/doc/swoole.ide.php) to your ide's include path. you can create a issue telling me to add other extension-include-files.
