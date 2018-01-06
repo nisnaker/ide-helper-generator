@@ -116,34 +116,34 @@ defined('SWOOLE_FAST_PACK') or define('SWOOLE_FAST_PACK', 1);
  * ext functions:
  */
 
-function swoole_version () {}
-function swoole_cpu_num () {}
-function swoole_last_error () {}
-function swoole_event_add ($fd, $read_callback, $write_callback, $events) {}
-function swoole_event_set ($fd, $read_callback, $write_callback, $events) {}
-function swoole_event_del ($fd) {}
-function swoole_event_exit () {}
-function swoole_event_wait () {}
-function swoole_event_write ($fd, $data) {}
-function swoole_event_defer ($callback) {}
-function swoole_timer_after ($ms, $callback, $param) {}
-function swoole_timer_tick ($ms, $callback) {}
-function swoole_timer_exists ($timer_id) {}
-function swoole_timer_clear ($timer_id) {}
-function swoole_async_set (array $settings) {}
-function swoole_async_read ($filename, $callback, $chunk_size, $offset) {}
-function swoole_async_write ($filename, $content, $offset, $callback) {}
-function swoole_async_readfile ($filename, $callback) {}
-function swoole_async_writefile ($filename, $content, $callback, $flags) {}
-function swoole_async_dns_lookup ($domain_name, $content) {}
-function swoole_async_dns_lookup_coro ($domain_name) {}
-function swoole_client_select (&$read_array, &$write_array, &$error_array, $timeout) {}
-function swoole_select (&$read_array, &$write_array, &$error_array, $timeout) {}
-function swoole_set_process_name ($process_name) {}
-function swoole_get_local_ip () {}
-function swoole_get_local_mac () {}
-function swoole_strerror ($errno) {}
-function swoole_errno () {}
+function swoole_version () :NULL {}
+function swoole_cpu_num () :NULL {}
+function swoole_last_error () :NULL {}
+function swoole_event_add ($fd, $read_callback, $write_callback = NULL, $events = NULL) :NULL {}
+function swoole_event_set ($fd, $read_callback = NULL, $write_callback = NULL, $events = NULL) :NULL {}
+function swoole_event_del ($fd) :NULL {}
+function swoole_event_exit () :NULL {}
+function swoole_event_wait () :NULL {}
+function swoole_event_write ($fd, $data) :NULL {}
+function swoole_event_defer ($callback) :NULL {}
+function swoole_timer_after ($ms, $callback, $param = NULL) :NULL {}
+function swoole_timer_tick ($ms, $callback) :NULL {}
+function swoole_timer_exists ($timer_id) :NULL {}
+function swoole_timer_clear ($timer_id) :NULL {}
+function swoole_async_set (array $settings) :NULL {}
+function swoole_async_read ($filename, $callback, $chunk_size = NULL, $offset = NULL) :NULL {}
+function swoole_async_write ($filename, $content, $offset = NULL, $callback = NULL) :NULL {}
+function swoole_async_readfile ($filename, $callback) :NULL {}
+function swoole_async_writefile ($filename, $content, $callback = NULL, $flags = NULL) :NULL {}
+function swoole_async_dns_lookup ($domain_name, $content) :NULL {}
+function swoole_async_dns_lookup_coro ($domain_name) :NULL {}
+function swoole_client_select (&$read_array, &$write_array, &$error_array, $timeout = NULL) :NULL {}
+function swoole_select (&$read_array, &$write_array, &$error_array, $timeout = NULL) :NULL {}
+function swoole_set_process_name ($process_name) :NULL {}
+function swoole_get_local_ip () :NULL {}
+function swoole_get_local_mac () :NULL {}
+function swoole_strerror ($errno) :NULL {}
+function swoole_errno () :NULL {}
 
 
 /**
@@ -151,15 +151,15 @@ function swoole_errno () {}
  */
 
 namespace Swoole {
-    class Mmap{
+    class Mmap {
 
 
-        public static function open ($filename, $size, $offset) {}
+        public static function open ($filename, $size = NULL, $offset = NULL) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Lock{
+    class Lock {
         const FILELOCK = 2;
         const MUTEX = 3;
         const SEM = 4;
@@ -167,58 +167,58 @@ namespace Swoole {
         const SPINLOCK = 5;
 
 
-        public function __construct ($type, $filename) {}
+        public function __construct ($type = NULL, $filename = NULL) {}
         public function __destruct () {}
-        public function lock () {}
-        public function lockwait ($timeout) {}
-        public function trylock () {}
-        public function lock_read () {}
-        public function trylock_read () {}
-        public function unlock () {}
+        public function lock () :NULL {}
+        public function lockwait ($timeout = NULL) :NULL {}
+        public function trylock () :NULL {}
+        public function lock_read () :NULL {}
+        public function trylock_read () :NULL {}
+        public function unlock () :NULL {}
     }
 }
 
 namespace Swoole {
-    class Timer{
+    class Timer {
 
 
-        public static function tick ($ms, $callback, $param) {}
-        public static function after ($ms, $callback) {}
-        public static function exists ($timer_id) {}
-        public static function clear ($timer_id) {}
+        public static function tick ($ms, $callback, $param = NULL) :NULL {}
+        public static function after ($ms, $callback) :NULL {}
+        public static function exists ($timer_id) :NULL {}
+        public static function clear ($timer_id) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Event{
+    class Event {
 
 
-        public static function add ($fd, $read_callback, $write_callback, $events) {}
-        public static function del ($fd) {}
-        public static function set ($fd, $read_callback, $write_callback, $events) {}
-        public static function exit () {}
-        public static function write ($fd, $data) {}
-        public static function wait () {}
-        public static function defer ($callback) {}
+        public static function add ($fd, $read_callback, $write_callback = NULL, $events = NULL) :NULL {}
+        public static function del ($fd) :NULL {}
+        public static function set ($fd, $read_callback = NULL, $write_callback = NULL, $events = NULL) :NULL {}
+        public static function exit () :NULL {}
+        public static function write ($fd, $data) :NULL {}
+        public static function wait () :NULL {}
+        public static function defer ($callback) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Async{
+    class Async {
 
 
-        public static function read ($filename, $callback, $chunk_size, $offset) {}
-        public static function write ($filename, $content, $offset, $callback) {}
-        public static function readFile ($filename, $callback) {}
-        public static function writeFile ($filename, $content, $callback, $flags) {}
-        public static function dnsLookup ($domain_name, $content) {}
-        public static function dnsLookupCoro ($domain_name) {}
-        public static function set (array $settings) {}
+        public static function read ($filename, $callback, $chunk_size = NULL, $offset = NULL) :NULL {}
+        public static function write ($filename, $content, $offset = NULL, $callback = NULL) :NULL {}
+        public static function readFile ($filename, $callback) :NULL {}
+        public static function writeFile ($filename, $content, $callback = NULL, $flags = NULL) :NULL {}
+        public static function dnsLookup ($domain_name, $content) :NULL {}
+        public static function dnsLookupCoro ($domain_name) :NULL {}
+        public static function set (array $settings) :NULL {}
     }
 }
 
 namespace Swoole {
-    class MySQL{
+    class MySQL {
         const STATE_QUERY = 0;
         const STATE_READ_START = 1;
         const STATE_READ_FIELD  = 2;
@@ -240,50 +240,50 @@ namespace Swoole {
 
         public function __construct () {}
         public function __destruct () {}
-        public function connect (array $server_config, $callback) {}
-        public function begin ($callback) {}
-        public function commit ($callback) {}
-        public function rollback ($callback) {}
-        public function query ($sql, $callback) {}
-        public function close () {}
-        public function getState () {}
-        public function on ($event_name, $callback) {}
+        public function connect (array $server_config, $callback) :NULL {}
+        public function begin ($callback) :NULL {}
+        public function commit ($callback) :NULL {}
+        public function rollback ($callback) :NULL {}
+        public function query ($sql, $callback) :NULL {}
+        public function close () :NULL {}
+        public function getState () :NULL {}
+        public function on ($event_name, $callback) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Table{
+    class Table {
         const TYPE_INT = 1;
         const TYPE_STRING = 7;
         const TYPE_FLOAT = 6;
 
 
-        public function __construct ($table_size, $conflict_proportion) {}
-        public function column ($name, $type, $size) {}
-        public function create () {}
-        public function destroy () {}
-        public function set ($key, array $value) {}
-        public function get ($key, $field) {}
-        public function count () {}
-        public function del ($key) {}
-        public function exist ($key) {}
-        public function incr ($key, $column, $incrby) {}
-        public function decr ($key, $column, $decrby) {}
-        public function getMemorySize () {}
-        public function offsetExists ($offset) {}
-        public function offsetGet ($offset) {}
-        public function offsetSet ($offset, $value) {}
-        public function offsetUnset ($offset) {}
-        public function rewind () {}
-        public function next () {}
-        public function current () {}
-        public function key () {}
-        public function valid () {}
+        public function __construct ($table_size, $conflict_proportion = NULL) {}
+        public function column ($name, $type, $size = NULL) :NULL {}
+        public function create () :NULL {}
+        public function destroy () :NULL {}
+        public function set ($key, array $value) :NULL {}
+        public function get ($key, $field = NULL) :NULL {}
+        public function count () :NULL {}
+        public function del ($key) :NULL {}
+        public function exist ($key) :NULL {}
+        public function incr ($key, $column, $incrby = NULL) :NULL {}
+        public function decr ($key, $column, $decrby = NULL) :NULL {}
+        public function getMemorySize () :NULL {}
+        public function offsetExists ($offset) :NULL {}
+        public function offsetGet ($offset) :NULL {}
+        public function offsetSet ($offset, $value) :NULL {}
+        public function offsetUnset ($offset) :NULL {}
+        public function rewind () :NULL {}
+        public function next () :NULL {}
+        public function current () :NULL {}
+        public function key () :NULL {}
+        public function valid () :NULL {}
     }
 }
 
 namespace Swoole {
-    class Server{
+    class Server {
 
         public $onConnect;
         public $onReceive;
@@ -315,82 +315,82 @@ namespace Swoole {
         public $taskworker;
         public $worker_pid;
 
-        public function __construct ($host, $port, $mode, $sock_type) {}
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) {}
-        public function addlistener ($host, $port, $sock_type) {}
-        public function on ($event_name, $callback) {}
-        public function set (array $settings) {}
-        public function start () {}
-        public function send ($fd, $send_data, $reactor_id) {}
-        public function sendto ($ip, $port, $send_data, $server_socket) {}
-        public function sendwait ($conn_fd, $send_data) {}
-        public function exist ($fd) {}
-        public function protect ($fd, $is_protected) {}
-        public function sendfile ($conn_fd, $filename, $offset, $length) {}
-        public function close ($fd, $reset) {}
-        public function confirm ($fd) {}
-        public function pause ($fd) {}
-        public function resume ($fd) {}
-        public function task ($data, $worker_id, $finish_callback) {}
-        public function taskwait ($data, $timeout, $worker_id) {}
-        public function taskWaitMulti (array $tasks, $timeout) {}
-        public function taskCo (array $tasks, $timeout) {}
-        public function finish ($data) {}
-        public function reload () {}
-        public function shutdown () {}
-        public function stop ($worker_id) {}
-        public function getLastError () {}
-        public function heartbeat ($reactor_id) {}
-        public function connection_info ($fd, $reactor_id) {}
-        public function connection_list ($start_fd, $find_count) {}
-        public function getClientInfo ($fd, $reactor_id) {}
-        public function getClientList ($start_fd, $find_count) {}
-        public function after ($ms, $callback, $param) {}
-        public function tick ($ms, $callback) {}
-        public function clearTimer ($timer_id) {}
-        public function defer ($callback) {}
-        public function sendMessage ($dst_worker_id, $data) {}
-        public function addProcess (swoole_process $process) {}
-        public function stats () {}
-        public function bind ($fd, $uid) {}
+        public function listen ($host, $port, $sock_type) :NULL {}
+        public function addlistener ($host, $port, $sock_type) :NULL {}
+        public function on ($event_name, $callback) :NULL {}
+        public function set (array $settings) :NULL {}
+        public function start () :NULL {}
+        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
+        public function sendwait ($conn_fd, $send_data) :NULL {}
+        public function exist ($fd) :NULL {}
+        public function protect ($fd, $is_protected = NULL) :NULL {}
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
+        public function close ($fd, $reset = NULL) :NULL {}
+        public function confirm ($fd) :NULL {}
+        public function pause ($fd) :NULL {}
+        public function resume ($fd) :NULL {}
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
+        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
+        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
+        public function finish ($data) :NULL {}
+        public function reload () :NULL {}
+        public function shutdown () :NULL {}
+        public function stop ($worker_id = NULL) :NULL {}
+        public function getLastError () :NULL {}
+        public function heartbeat ($reactor_id) :NULL {}
+        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
+        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
+        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
+        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
+        public function after ($ms, $callback, $param = NULL) :NULL {}
+        public function tick ($ms, $callback) :NULL {}
+        public function clearTimer ($timer_id) :NULL {}
+        public function defer ($callback) :NULL {}
+        public function sendMessage ($dst_worker_id, $data) :NULL {}
+        public function addProcess (\swoole_process $process) :NULL {}
+        public function stats () :NULL {}
+        public function bind ($fd, $uid) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Buffer{
+    class Buffer {
 
 
-        public function __construct ($size) {}
+        public function __construct ($size = NULL) {}
         public function __destruct () {}
-        public function __toString () {}
-        public function substr ($offset, $length, $seek) {}
-        public function write ($offset, $data) {}
-        public function read ($offset, $length) {}
-        public function append ($data) {}
-        public function expand ($size) {}
-        public function recycle () {}
-        public function clear () {}
+        public function __toString () :NULL {}
+        public function substr ($offset, $length = NULL, $seek = NULL) :NULL {}
+        public function write ($offset, $data) :NULL {}
+        public function read ($offset, $length) :NULL {}
+        public function append ($data) :NULL {}
+        public function expand ($size) :NULL {}
+        public function recycle () :NULL {}
+        public function clear () :NULL {}
     }
 }
 
 namespace Swoole {
-    class Atomic{
+    class Atomic {
 
 
-        public function __construct ($value) {}
-        public function add ($add_value) {}
-        public function sub ($sub_value) {}
-        public function get () {}
-        public function set ($value) {}
-        public function wait ($timeout) {}
-        public function wakeup ($count) {}
-        public function cmpset ($cmp_value, $new_value) {}
+        public function __construct ($value = NULL) {}
+        public function add ($add_value = NULL) :NULL {}
+        public function sub ($sub_value = NULL) :NULL {}
+        public function get () :NULL {}
+        public function set ($value) :NULL {}
+        public function wait ($timeout = NULL) :NULL {}
+        public function wakeup ($count = NULL) :NULL {}
+        public function cmpset ($cmp_value, $new_value) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Client{
+    class Client {
         const MSG_OOB = 1;
         const MSG_PEEK = 2;
         const MSG_DONTWAIT = 64;
@@ -410,41 +410,41 @@ namespace Swoole {
         public $onBufferFull;
         public $onBufferEmpty;
 
-        public function __construct ($type, $async) {}
+        public function __construct ($type, $async = NULL) {}
         public function __destruct () {}
-        public function set (array $settings) {}
-        public function connect ($host, $port, $timeout, $sock_flag) {}
-        public function recv ($size, $flag) {}
-        public function send ($data, $flag) {}
-        public function pipe ($dst_socket) {}
-        public function sendfile ($filename, $offset, $length) {}
-        public function sendto ($ip, $port, $data) {}
-        public function sleep () {}
-        public function wakeup () {}
-        public function pause () {}
-        public function resume () {}
-        public function isConnected () {}
-        public function getsockname () {}
-        public function getpeername () {}
-        public function close ($force) {}
-        public function on ($event_name, $callback) {}
+        public function set (array $settings) :NULL {}
+        public function connect ($host, $port = NULL, $timeout = NULL, $sock_flag = NULL) :NULL {}
+        public function recv ($size = NULL, $flag = NULL) :NULL {}
+        public function send ($data, $flag = NULL) :NULL {}
+        public function pipe ($dst_socket) :NULL {}
+        public function sendfile ($filename, $offset = NULL, $length = NULL) :NULL {}
+        public function sendto ($ip, $port, $data) :NULL {}
+        public function sleep () :NULL {}
+        public function wakeup () :NULL {}
+        public function pause () :NULL {}
+        public function resume () :NULL {}
+        public function isConnected () :NULL {}
+        public function getsockname () :NULL {}
+        public function getpeername () :NULL {}
+        public function close ($force = NULL) :NULL {}
+        public function on ($event_name, $callback) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Channel{
+    class Channel {
 
 
         public function __construct ($size) {}
         public function __destruct () {}
-        public function push ($data) {}
-        public function pop () {}
-        public function stats () {}
+        public function push ($data) :NULL {}
+        public function pop () :NULL {}
+        public function stats () :NULL {}
     }
 }
 
 namespace Swoole {
-    class Process{
+    class Process {
         const IPC_NOWAIT = 256;
 
         public $pipe;
@@ -454,82 +454,82 @@ namespace Swoole {
         public $pid;
         public $id;
 
-        public function __construct ($callback, $redirect_stdin_and_stdout, $pipe_type) {}
+        public function __construct ($callback, $redirect_stdin_and_stdout = NULL, $pipe_type = NULL) {}
         public function __destruct () {}
-        public static function wait ($blocking) {}
-        public static function signal ($signal_no, $callback) {}
-        public static function alarm ($usec) {}
-        public static function kill ($pid, $signal_no) {}
-        public static function daemon ($nochdir, $noclose) {}
-        public function useQueue ($key, $mode) {}
-        public function statQueue () {}
-        public function freeQueue () {}
-        public function start () {}
-        public function write ($data) {}
-        public function close () {}
-        public function read ($size) {}
-        public function push ($data) {}
-        public function pop ($size) {}
-        public function exit ($exit_code) {}
-        public function exec ($exec_file, $args) {}
-        public function name ($process_name) {}
+        public static function wait ($blocking = NULL) :NULL {}
+        public static function signal ($signal_no, $callback) :NULL {}
+        public static function alarm ($usec) :NULL {}
+        public static function kill ($pid, $signal_no = NULL) :NULL {}
+        public static function daemon ($nochdir = NULL, $noclose = NULL) :NULL {}
+        public function useQueue ($key = NULL, $mode = NULL) :NULL {}
+        public function statQueue () :NULL {}
+        public function freeQueue () :NULL {}
+        public function start () :NULL {}
+        public function write ($data) :NULL {}
+        public function close () :NULL {}
+        public function read ($size = NULL) :NULL {}
+        public function push ($data) :NULL {}
+        public function pop ($size = NULL) :NULL {}
+        public function exit ($exit_code = NULL) :NULL {}
+        public function exec ($exec_file, $args) :NULL {}
+        public function name ($process_name) :NULL {}
     }
 }
 
 namespace Swoole {
-    class Coroutine{
+    class Coroutine {
 
 
-        public static function create () {}
-        public static function cli_wait () {}
-        public static function suspend () {}
-        public static function resume () {}
-        public static function getuid () {}
-        public static function sleep ($seconds) {}
-        public static function call_user_func () {}
-        public static function call_user_func_array () {}
+        public static function create () :NULL {}
+        public static function cli_wait () :NULL {}
+        public static function suspend () :NULL {}
+        public static function resume () :NULL {}
+        public static function getuid () :NULL {}
+        public static function sleep ($seconds) :NULL {}
+        public static function call_user_func () :NULL {}
+        public static function call_user_func_array () :NULL {}
     }
 }
 
 namespace Swoole {
-    class Serialize{
+    class Serialize {
 
 
-        public static function pack ($data, $flag) {}
-        public static function unpack ($string, $args) {}
+        public static function pack ($data, $flag = NULL) :NULL {}
+        public static function unpack ($string, $args = NULL) :NULL {}
     }
 }
 
 namespace Swoole\Table {
-    class Row{
+    class Row {
 
         public $key;
         public $value;
 
-        public function offsetExists ($offset) {}
-        public function offsetGet ($offset) {}
-        public function offsetSet ($offset, $value) {}
-        public function offsetUnset ($offset) {}
+        public function offsetExists ($offset) :NULL {}
+        public function offsetGet ($offset) :NULL {}
+        public function offsetSet ($offset, $value) :NULL {}
+        public function offsetUnset ($offset) :NULL {}
         public function __destruct () {}
     }
 }
 
 namespace Swoole {
-    class Exception extends \Exception{
+    class Exception extends \Exception {
 
         protected $message;
         protected $code;
         protected $file;
         protected $line;
 
-        public function __construct ($message, $code, $previous) {}
-        public function __wakeup () {}
-        public function __toString () {}
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
+        public function __wakeup () :NULL {}
+        public function __toString () :NULL {}
     }
 }
 
 namespace Swoole\Http {
-    class Client{
+    class Client {
 
         public $type;
         public $errCode;
@@ -551,28 +551,28 @@ namespace Swoole\Http {
         public $onMessage;
         public $onClose;
 
-        public function __construct ($host, $port, $ssl) {}
+        public function __construct ($host, $port = NULL, $ssl = NULL) {}
         public function __destruct () {}
-        public function set (array $settings) {}
-        public function setMethod ($method) {}
-        public function setHeaders (array $headers) {}
-        public function setCookies (array $cookies) {}
-        public function setData ($data) {}
-        public function addFile ($path, $name, $type, $filename, $offset, $length) {}
-        public function execute ($path, $callback) {}
-        public function push ($data, $opcode, $finish) {}
-        public function get ($path, $callback) {}
-        public function post ($path, $data, $callback) {}
-        public function upgrade ($path, $callback) {}
-        public function download ($path, $file, $callback, $offset) {}
-        public function isConnected () {}
-        public function close () {}
-        public function on ($event_name, $callback) {}
+        public function set (array $settings) :NULL {}
+        public function setMethod ($method) :NULL {}
+        public function setHeaders (array $headers) :NULL {}
+        public function setCookies (array $cookies) :NULL {}
+        public function setData ($data) :NULL {}
+        public function addFile ($path, $name, $type = NULL, $filename = NULL, $offset = NULL, $length = NULL) :NULL {}
+        public function execute ($path, $callback) :NULL {}
+        public function push ($data, $opcode = NULL, $finish = NULL) :NULL {}
+        public function get ($path, $callback) :NULL {}
+        public function post ($path, $data, $callback) :NULL {}
+        public function upgrade ($path, $callback) :NULL {}
+        public function download ($path, $file, $callback, $offset = NULL) :NULL {}
+        public function isConnected () :NULL {}
+        public function close () :NULL {}
+        public function on ($event_name, $callback) :NULL {}
     }
 }
 
 namespace Swoole\Server {
-    class Port{
+    class Port {
 
         public $onConnect;
         public $onReceive;
@@ -592,13 +592,13 @@ namespace Swoole\Server {
 
         private function __construct () {}
         public function __destruct () {}
-        public function set (array $settings) {}
-        public function on ($event_name, $callback) {}
+        public function set (array $settings) :NULL {}
+        public function on ($event_name, $callback) :NULL {}
     }
 }
 
 namespace Swoole\Http {
-    class Server extends \Swoole\Server{
+    class Server extends \Swoole\Server {
 
         public $onConnect;
         public $onReceive;
@@ -632,50 +632,50 @@ namespace Swoole\Http {
         public $onHandshake;
         public $setting;
 
-        public function on ($event_name, $callback) {}
-        public function start () {}
-        public function __construct ($host, $port, $mode, $sock_type) {}
+        public function on ($event_name, $callback) :NULL {}
+        public function start () :NULL {}
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) {}
-        public function addlistener ($host, $port, $sock_type) {}
-        public function set (array $settings) {}
-        public function send ($fd, $send_data, $reactor_id) {}
-        public function sendto ($ip, $port, $send_data, $server_socket) {}
-        public function sendwait ($conn_fd, $send_data) {}
-        public function exist ($fd) {}
-        public function protect ($fd, $is_protected) {}
-        public function sendfile ($conn_fd, $filename, $offset, $length) {}
-        public function close ($fd, $reset) {}
-        public function confirm ($fd) {}
-        public function pause ($fd) {}
-        public function resume ($fd) {}
-        public function task ($data, $worker_id, $finish_callback) {}
-        public function taskwait ($data, $timeout, $worker_id) {}
-        public function taskWaitMulti (array $tasks, $timeout) {}
-        public function taskCo (array $tasks, $timeout) {}
-        public function finish ($data) {}
-        public function reload () {}
-        public function shutdown () {}
-        public function stop ($worker_id) {}
-        public function getLastError () {}
-        public function heartbeat ($reactor_id) {}
-        public function connection_info ($fd, $reactor_id) {}
-        public function connection_list ($start_fd, $find_count) {}
-        public function getClientInfo ($fd, $reactor_id) {}
-        public function getClientList ($start_fd, $find_count) {}
-        public function after ($ms, $callback, $param) {}
-        public function tick ($ms, $callback) {}
-        public function clearTimer ($timer_id) {}
-        public function defer ($callback) {}
-        public function sendMessage ($dst_worker_id, $data) {}
-        public function addProcess (swoole_process $process) {}
-        public function stats () {}
-        public function bind ($fd, $uid) {}
+        public function listen ($host, $port, $sock_type) :NULL {}
+        public function addlistener ($host, $port, $sock_type) :NULL {}
+        public function set (array $settings) :NULL {}
+        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
+        public function sendwait ($conn_fd, $send_data) :NULL {}
+        public function exist ($fd) :NULL {}
+        public function protect ($fd, $is_protected = NULL) :NULL {}
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
+        public function close ($fd, $reset = NULL) :NULL {}
+        public function confirm ($fd) :NULL {}
+        public function pause ($fd) :NULL {}
+        public function resume ($fd) :NULL {}
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
+        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
+        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
+        public function finish ($data) :NULL {}
+        public function reload () :NULL {}
+        public function shutdown () :NULL {}
+        public function stop ($worker_id = NULL) :NULL {}
+        public function getLastError () :NULL {}
+        public function heartbeat ($reactor_id) :NULL {}
+        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
+        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
+        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
+        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
+        public function after ($ms, $callback, $param = NULL) :NULL {}
+        public function tick ($ms, $callback) :NULL {}
+        public function clearTimer ($timer_id) :NULL {}
+        public function defer ($callback) :NULL {}
+        public function sendMessage ($dst_worker_id, $data) :NULL {}
+        public function addProcess (\swoole_process $process) :NULL {}
+        public function stats () :NULL {}
+        public function bind ($fd, $uid) :NULL {}
     }
 }
 
 namespace Swoole\Redis {
-    class Server extends \Swoole\Server{
+    class Server extends \Swoole\Server {
         const NIL = 1;
         const ERROR = 0;
         const STATUS = 2;
@@ -714,52 +714,52 @@ namespace Swoole\Redis {
         public $taskworker;
         public $worker_pid;
 
-        public function start () {}
-        public function setHandler ($command, $callback, $number_of_string_param, $type_of_array_param) {}
-        public static function format ($type, $value) {}
-        public function __construct ($host, $port, $mode, $sock_type) {}
+        public function start () :NULL {}
+        public function setHandler ($command, $callback, $number_of_string_param = NULL, $type_of_array_param = NULL) :NULL {}
+        public static function format ($type, $value = NULL) :NULL {}
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) {}
-        public function addlistener ($host, $port, $sock_type) {}
-        public function on ($event_name, $callback) {}
-        public function set (array $settings) {}
-        public function send ($fd, $send_data, $reactor_id) {}
-        public function sendto ($ip, $port, $send_data, $server_socket) {}
-        public function sendwait ($conn_fd, $send_data) {}
-        public function exist ($fd) {}
-        public function protect ($fd, $is_protected) {}
-        public function sendfile ($conn_fd, $filename, $offset, $length) {}
-        public function close ($fd, $reset) {}
-        public function confirm ($fd) {}
-        public function pause ($fd) {}
-        public function resume ($fd) {}
-        public function task ($data, $worker_id, $finish_callback) {}
-        public function taskwait ($data, $timeout, $worker_id) {}
-        public function taskWaitMulti (array $tasks, $timeout) {}
-        public function taskCo (array $tasks, $timeout) {}
-        public function finish ($data) {}
-        public function reload () {}
-        public function shutdown () {}
-        public function stop ($worker_id) {}
-        public function getLastError () {}
-        public function heartbeat ($reactor_id) {}
-        public function connection_info ($fd, $reactor_id) {}
-        public function connection_list ($start_fd, $find_count) {}
-        public function getClientInfo ($fd, $reactor_id) {}
-        public function getClientList ($start_fd, $find_count) {}
-        public function after ($ms, $callback, $param) {}
-        public function tick ($ms, $callback) {}
-        public function clearTimer ($timer_id) {}
-        public function defer ($callback) {}
-        public function sendMessage ($dst_worker_id, $data) {}
-        public function addProcess (swoole_process $process) {}
-        public function stats () {}
-        public function bind ($fd, $uid) {}
+        public function listen ($host, $port, $sock_type) :NULL {}
+        public function addlistener ($host, $port, $sock_type) :NULL {}
+        public function on ($event_name, $callback) :NULL {}
+        public function set (array $settings) :NULL {}
+        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
+        public function sendwait ($conn_fd, $send_data) :NULL {}
+        public function exist ($fd) :NULL {}
+        public function protect ($fd, $is_protected = NULL) :NULL {}
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
+        public function close ($fd, $reset = NULL) :NULL {}
+        public function confirm ($fd) :NULL {}
+        public function pause ($fd) :NULL {}
+        public function resume ($fd) :NULL {}
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
+        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
+        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
+        public function finish ($data) :NULL {}
+        public function reload () :NULL {}
+        public function shutdown () :NULL {}
+        public function stop ($worker_id = NULL) :NULL {}
+        public function getLastError () :NULL {}
+        public function heartbeat ($reactor_id) :NULL {}
+        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
+        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
+        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
+        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
+        public function after ($ms, $callback, $param = NULL) :NULL {}
+        public function tick ($ms, $callback) :NULL {}
+        public function clearTimer ($timer_id) :NULL {}
+        public function defer ($callback) :NULL {}
+        public function sendMessage ($dst_worker_id, $data) :NULL {}
+        public function addProcess (\swoole_process $process) :NULL {}
+        public function stats () :NULL {}
+        public function bind ($fd, $uid) :NULL {}
     }
 }
 
 namespace Swoole\Http {
-    class Request{
+    class Request {
 
         public $fd;
         public $header;
@@ -771,33 +771,33 @@ namespace Swoole\Http {
         public $post;
         public $tmpfiles;
 
-        public function rawcontent () {}
+        public function rawcontent () :NULL {}
         public function __destruct () {}
     }
 }
 
 namespace Swoole\Http {
-    class Response{
+    class Response {
 
         public $fd;
         public $header;
         public $cookie;
         public $trailer;
 
-        public function initHeader () {}
-        public function cookie ($name, $value, $expires, $path, $domain, $secure, $httponly) {}
-        public function rawcookie ($name, $value, $expires, $path, $domain, $secure, $httponly) {}
-        public function status ($http_code) {}
-        public function header ($key, $value, $ucwords) {}
-        public function write ($content) {}
-        public function end ($content) {}
-        public function sendfile ($filename, $offset, $length) {}
+        public function initHeader () :NULL {}
+        public function cookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL) :NULL {}
+        public function rawcookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL) :NULL {}
+        public function status ($http_code) :NULL {}
+        public function header ($key, $value, $ucwords = NULL) :NULL {}
+        public function write ($content) :NULL {}
+        public function end ($content = NULL) :NULL {}
+        public function sendfile ($filename, $offset = NULL, $length = NULL) :NULL {}
         public function __destruct () {}
     }
 }
 
 namespace Swoole\Coroutine {
-    class MySQL{
+    class MySQL {
 
         private $serverInfo;
         public $sock;
@@ -811,38 +811,38 @@ namespace Swoole\Coroutine {
 
         public function __construct () {}
         public function __destruct () {}
-        public function connect (array $server_config) {}
-        public function query ($sql, $timeout) {}
-        public function recv () {}
-        public function setDefer ($defer) {}
-        public function getDefer () {}
-        public function close () {}
+        public function connect (array $server_config) :NULL {}
+        public function query ($sql, $timeout = NULL) :NULL {}
+        public function recv () :NULL {}
+        public function setDefer ($defer = NULL) :NULL {}
+        public function getDefer () :NULL {}
+        public function close () :NULL {}
     }
 }
 
 namespace Swoole\MySQL {
-    class Exception extends \Exception{
+    class Exception extends \Exception {
 
         protected $message;
         protected $code;
         protected $file;
         protected $line;
 
-        public function __construct ($message, $code, $previous) {}
-        public function __wakeup () {}
-        public function __toString () {}
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
+        public function __wakeup () :NULL {}
+        public function __toString () :NULL {}
     }
 }
 
 namespace Swoole\WebSocket {
-    class Frame{
+    class Frame {
 
 
     }
 }
 
 namespace Swoole\WebSocket {
-    class Server extends \Swoole\Http\Server{
+    class Server extends \Swoole\Http\Server {
 
         public $onConnect;
         public $onReceive;
@@ -876,53 +876,53 @@ namespace Swoole\WebSocket {
         public $onHandshake;
         public $setting;
 
-        public function on ($event_name, $callback) {}
-        public function push ($fd, $data, $opcode, $finish) {}
-        public function exist ($fd) {}
-        public static function pack ($data, $opcode, $finish, $mask) {}
-        public static function unpack ($data) {}
-        public function start () {}
-        public function __construct ($host, $port, $mode, $sock_type) {}
+        public function on ($event_name, $callback) :NULL {}
+        public function push ($fd, $data, $opcode = NULL, $finish = NULL) :NULL {}
+        public function exist ($fd) :NULL {}
+        public static function pack ($data, $opcode = NULL, $finish = NULL, $mask = NULL) :NULL {}
+        public static function unpack ($data) :NULL {}
+        public function start () :NULL {}
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) {}
-        public function addlistener ($host, $port, $sock_type) {}
-        public function set (array $settings) {}
-        public function send ($fd, $send_data, $reactor_id) {}
-        public function sendto ($ip, $port, $send_data, $server_socket) {}
-        public function sendwait ($conn_fd, $send_data) {}
-        public function protect ($fd, $is_protected) {}
-        public function sendfile ($conn_fd, $filename, $offset, $length) {}
-        public function close ($fd, $reset) {}
-        public function confirm ($fd) {}
-        public function pause ($fd) {}
-        public function resume ($fd) {}
-        public function task ($data, $worker_id, $finish_callback) {}
-        public function taskwait ($data, $timeout, $worker_id) {}
-        public function taskWaitMulti (array $tasks, $timeout) {}
-        public function taskCo (array $tasks, $timeout) {}
-        public function finish ($data) {}
-        public function reload () {}
-        public function shutdown () {}
-        public function stop ($worker_id) {}
-        public function getLastError () {}
-        public function heartbeat ($reactor_id) {}
-        public function connection_info ($fd, $reactor_id) {}
-        public function connection_list ($start_fd, $find_count) {}
-        public function getClientInfo ($fd, $reactor_id) {}
-        public function getClientList ($start_fd, $find_count) {}
-        public function after ($ms, $callback, $param) {}
-        public function tick ($ms, $callback) {}
-        public function clearTimer ($timer_id) {}
-        public function defer ($callback) {}
-        public function sendMessage ($dst_worker_id, $data) {}
-        public function addProcess (swoole_process $process) {}
-        public function stats () {}
-        public function bind ($fd, $uid) {}
+        public function listen ($host, $port, $sock_type) :NULL {}
+        public function addlistener ($host, $port, $sock_type) :NULL {}
+        public function set (array $settings) :NULL {}
+        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
+        public function sendwait ($conn_fd, $send_data) :NULL {}
+        public function protect ($fd, $is_protected = NULL) :NULL {}
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
+        public function close ($fd, $reset = NULL) :NULL {}
+        public function confirm ($fd) :NULL {}
+        public function pause ($fd) :NULL {}
+        public function resume ($fd) :NULL {}
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
+        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
+        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
+        public function finish ($data) :NULL {}
+        public function reload () :NULL {}
+        public function shutdown () :NULL {}
+        public function stop ($worker_id = NULL) :NULL {}
+        public function getLastError () :NULL {}
+        public function heartbeat ($reactor_id) :NULL {}
+        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
+        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
+        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
+        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
+        public function after ($ms, $callback, $param = NULL) :NULL {}
+        public function tick ($ms, $callback) :NULL {}
+        public function clearTimer ($timer_id) :NULL {}
+        public function defer ($callback) :NULL {}
+        public function sendMessage ($dst_worker_id, $data) :NULL {}
+        public function addProcess (\swoole_process $process) :NULL {}
+        public function stats () :NULL {}
+        public function bind ($fd, $uid) :NULL {}
     }
 }
 
 namespace Swoole\Coroutine {
-    class Client{
+    class Client {
         const MSG_OOB = 1;
         const MSG_PEEK = 2;
         const MSG_DONTWAIT = 64;
@@ -933,72 +933,72 @@ namespace Swoole\Coroutine {
 
         public function __construct ($type) {}
         public function __destruct () {}
-        public function set (array $settings) {}
-        public function connect ($host, $port, $timeout) {}
-        public function recv () {}
-        public function send ($data, $flag) {}
-        public function sendfile ($filename, $offset, $length) {}
-        public function sendto ($ip, $port, $data) {}
-        public function isConnected () {}
-        public function getsockname () {}
-        public function getpeername () {}
-        public function close () {}
+        public function set (array $settings) :NULL {}
+        public function connect ($host, $port = NULL, $timeout = NULL) :NULL {}
+        public function recv () :NULL {}
+        public function send ($data, $flag = NULL) :NULL {}
+        public function sendfile ($filename, $offset = NULL, $length = NULL) :NULL {}
+        public function sendto ($ip, $port, $data) :NULL {}
+        public function isConnected () :NULL {}
+        public function getsockname () :NULL {}
+        public function getpeername () :NULL {}
+        public function close () :NULL {}
     }
 }
 
 namespace Swoole\Connection {
-    class Iterator{
+    class Iterator {
 
 
-        public function rewind () {}
-        public function next () {}
-        public function current () {}
-        public function key () {}
-        public function valid () {}
-        public function count () {}
-        public function offsetExists ($fd) {}
-        public function offsetGet ($fd) {}
-        public function offsetSet ($fd, $value) {}
-        public function offsetUnset ($fd) {}
+        public function rewind () :NULL {}
+        public function next () :NULL {}
+        public function current () :NULL {}
+        public function key () :NULL {}
+        public function valid () :NULL {}
+        public function count () :NULL {}
+        public function offsetExists ($fd) :NULL {}
+        public function offsetGet ($fd) :NULL {}
+        public function offsetSet ($fd, $value) :NULL {}
+        public function offsetUnset ($fd) :NULL {}
     }
 }
 
 namespace Swoole\Coroutine\Http {
-    class Client{
+    class Client {
 
         public $errCode;
         public $sock;
 
         public function __construct () {}
         public function __destruct () {}
-        public function set () {}
-        public function setMethod () {}
-        public function setHeaders () {}
-        public function setCookies () {}
-        public function setData () {}
-        public function execute () {}
-        public function get () {}
-        public function post () {}
-        public function addFile () {}
-        public function isConnected () {}
-        public function close () {}
-        public function setDefer () {}
-        public function getDefer () {}
-        public function recv () {}
+        public function set () :NULL {}
+        public function setMethod () :NULL {}
+        public function setHeaders () :NULL {}
+        public function setCookies () :NULL {}
+        public function setData () :NULL {}
+        public function execute () :NULL {}
+        public function get () :NULL {}
+        public function post () :NULL {}
+        public function addFile () :NULL {}
+        public function isConnected () :NULL {}
+        public function close () :NULL {}
+        public function setDefer () :NULL {}
+        public function getDefer () :NULL {}
+        public function recv () :NULL {}
     }
 }
 
 namespace Swoole\Coroutine\MySQL {
-    class Exception extends \Exception{
+    class Exception extends \Exception {
 
         protected $message;
         protected $code;
         protected $file;
         protected $line;
 
-        public function __construct ($message, $code, $previous) {}
-        public function __wakeup () {}
-        public function __toString () {}
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
+        public function __wakeup () :NULL {}
+        public function __toString () :NULL {}
     }
 }
 

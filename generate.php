@@ -97,7 +97,7 @@ class IdeHelperGenerator
 
         $counter = 0;
         foreach ($ref->getFunctions() as $refFunc) {
-            $output .= sprintf('function %s (%s) {}', $refFunc->getName(), $this->getParamsString($refFunc)) . "\n";
+            $output .= sprintf('function %s (%s) :NULL {}', $refFunc->getName(), $this->getParamsString($refFunc)) . "\n";
             $counter++;
         }
         $this->log("found {$counter} functions");
@@ -118,6 +118,9 @@ class IdeHelperGenerator
 
             if ($refParam->hasType()) {
                 $type = $refParam->getType();
+                if(!in_array($type->getName(), ['array'])) {
+                    $param .= '\\';
+                }
                 $param .= $type->getName() . ' ';
             }
 
@@ -126,6 +129,10 @@ class IdeHelperGenerator
             }
 
             $param .= "\${$refParam->getName()}";
+
+            if($refParam->isOptional()) {
+                $param .= ' = NULL';
+            }
 
             $params[] = $param;
         }
@@ -187,7 +194,7 @@ class IdeHelperGenerator
             if ($parentClass) {
                 $output .= ' extends \\' . $parentClass->getName();
             }
-            $output .= "{\n";
+            $output .= " {\n";
 
             // constants
             foreach ($refClass->getConstants() as $name => $value) {
@@ -236,9 +243,13 @@ class IdeHelperGenerator
                     $output .= 'static ';
                 }
 
-                $output .= sprintf('function %s (%s) {}', $refMethod->getName(),
-                        $this->getParamsString($refMethod)) . "\n";
-
+                if($refMethod->isConstructor() || $refMethod->isDestructor()) {
+                    $output .= sprintf('function %s (%s) {}', $refMethod->getName(),
+                            $this->getParamsString($refMethod)) . "\n";
+                } else {
+                    $output .= sprintf('function %s (%s) :NULL {}', $refMethod->getName(),
+                            $this->getParamsString($refMethod)) . "\n";
+                }
             }
 
             $output .= "{$tab}}\n";
