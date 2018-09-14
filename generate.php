@@ -154,17 +154,17 @@ class IdeHelperGenerator
 
         $classNames = $ref->getClassNames();
 
-        array_walk($classNames, function (&$item) use ($longHolder) {
-            $item = str_replace('_', $longHolder, $item);
-        });
+        // array_walk($classNames, function (&$item) use ($longHolder) {
+        //     $item = str_replace('_', $longHolder, $item);
+        // });
 
-        usort($classNames, function ($a, $b) {
-            return strlen($a) > strlen($b);
-        });
+        // usort($classNames, function ($a, $b) {
+        //     return strlen($a) > strlen($b);
+        // });
 
-        array_walk($classNames, function (&$item) use ($longHolder) {
-            $item = str_replace($longHolder, '_', $item);
-        });
+        // array_walk($classNames, function (&$item) use ($longHolder) {
+        //     $item = str_replace($longHolder, '_', $item);
+        // });
 
         $counter = 0;
         foreach ($classNames as $className) {
@@ -172,7 +172,7 @@ class IdeHelperGenerator
 
             // for swoole
             if ($refClass->getName() != $className) {
-                $output .= "namespace { class {$className} extends {$refClass->getName()} {}}\n";
+                // $output .= "namespace { class {$className} extends \\{$refClass->getName()} {}}\n";
                 continue;
             }
 
@@ -260,6 +260,8 @@ class IdeHelperGenerator
         }
 
         $this->log("found {$counter} classes");
+
+        $output = str_replace("\n\n\n", "\n\n", $output);
 
         return $output;
     }
