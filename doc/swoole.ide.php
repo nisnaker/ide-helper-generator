@@ -9,7 +9,7 @@
  * swoole
  * 
  * swoole support => enabled
- * Version => 4.1.2
+ * Version => 4.2.1
  * Author => Swoole Group[email: team@swoole.com]
  * coroutine => enabled
  * epoll => enabled
@@ -63,7 +63,7 @@ defined('SWOOLE_ASYNC') or define('SWOOLE_ASYNC', 1024);
 defined('SWOOLE_KEEP') or define('SWOOLE_KEEP', 4096);
 defined('SWOOLE_EVENT_READ') or define('SWOOLE_EVENT_READ', 512);
 defined('SWOOLE_EVENT_WRITE') or define('SWOOLE_EVENT_WRITE', 1024);
-defined('SWOOLE_VERSION') or define('SWOOLE_VERSION', '4.1.2');
+defined('SWOOLE_VERSION') or define('SWOOLE_VERSION', '4.2.1');
 defined('SWOOLE_ERROR_MALLOC_FAIL') or define('SWOOLE_ERROR_MALLOC_FAIL', 501);
 defined('SWOOLE_ERROR_SYSTEM_CALL_FAIL') or define('SWOOLE_ERROR_SYSTEM_CALL_FAIL', 502);
 defined('SWOOLE_ERROR_PHP_FATAL_ERROR') or define('SWOOLE_ERROR_PHP_FATAL_ERROR', 503);
@@ -781,6 +781,7 @@ namespace Swoole\Process {
         public function __construct ($worker_num, $ipc_type = NULL, $msgqueue_key = NULL) {}
         public function __destruct () {}
         public function on ($event_name, $callback) :NULL {}
+        public function getProcess () :NULL {}
         public function listen ($host, $port = NULL, $backlog = NULL) :NULL {}
         public function write ($data) :NULL {}
         public function start () :NULL {}
@@ -835,7 +836,7 @@ namespace Swoole {
     class Runtime {
 
         public static function enableStrictMode () :NULL {}
-        public static function enableCoroutine ($enable = NULL) :NULL {}
+        public static function enableCoroutine ($enable = NULL, $flags = NULL) :NULL {}
     }
 }
 
@@ -1113,6 +1114,25 @@ namespace Swoole\WebSocket {
         public $opcode;
         public $finish;
 
+        public function __toString () :NULL {}
+        public static function pack ($data, $opcode = NULL, $finish = NULL, $mask = NULL) :NULL {}
+        public static function unpack ($data) :NULL {}
+    }
+}
+
+namespace Swoole\WebSocket {
+    class CloseFrame extends \Swoole\WebSocket\Frame {
+
+        public $fd;
+        public $data;
+        public $finish;
+        public $opcode;
+        public $code;
+        public $reason;
+
+        public function __toString () :NULL {}
+        public static function pack ($data, $opcode = NULL, $finish = NULL, $mask = NULL) :NULL {}
+        public static function unpack ($data) :NULL {}
     }
 }
 
