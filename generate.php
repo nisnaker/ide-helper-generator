@@ -14,18 +14,18 @@ class IdeHelperGenerator
 
         foreach ($argv as $ext_name) {
             try {
-                new ReflectionExtension($ext_name);
+                $this->parseExtension($ext_name);
             } catch (ReflectionException $e) {
                 echo "ext '{$ext_name}' not found. please check.\n";
-                return;
             }
-        }
-
-        foreach ($argv as $ext_name) {
-            $this->parseExtension($ext_name);
         }
     }
 
+    /**
+     * @param $ext_name
+     *
+     * @throws ReflectionException
+     */
     private function parseExtension($ext_name)
     {
         $output = "<?php\n\n";
@@ -97,7 +97,8 @@ class IdeHelperGenerator
 
         $counter = 0;
         foreach ($ref->getFunctions() as $refFunc) {
-            $output .= sprintf('function %s (%s) :NULL {}', $refFunc->getName(), $this->getParamsString($refFunc)) . "\n";
+            list($comment, $param_str) = $this->getFuncInfo($refFunc);
+            $output .= sprintf("%s\nfunction %s (%s) {}\n\n", $comment, $refFunc->getName(), $param_str);
             $counter++;
         }
         $this->log("found {$counter} functions");
@@ -105,39 +106,28 @@ class IdeHelperGenerator
         return $output;
     }
 
-    /**
-     * get params string
-     * @param ReflectionFunctionAbstract $ref
-     * @return string
-     */
-    private function getParamsString(ReflectionFunctionAbstract $ref)
+    private function getFuncInfo(ReflectionFunctionAbstract $func, $indent = '')
     {
         $params = [];
-        foreach ($ref->getParameters() as $refParam) {
+        $param_str = [$indent . '/**'];
+        foreach ($func->getParameters() as $refParam) {
             $param = '';
-
-            if ($refParam->hasType()) {
-                $type = $refParam->getType();
-                if(!in_array($type->getName(), ['array'])) {
-                    $param .= '\\';
-                }
-                $param .= $type->getName() . ' ';
-            }
-
             if ($refParam->isPassedByReference()) {
                 $param .= '&';
             }
-
-            $param .= "\${$refParam->getName()}";
-
+            $param .= '$'.$refParam->getName();
             if($refParam->isOptional()) {
                 $param .= ' = NULL';
             }
-
             $params[] = $param;
+
+            $param_str[] = $indent . sprintf(' * @param %s $%s', $refParam->getType(), $refParam->getName());
         }
 
-        return implode(', ', $params);
+        $param_str[] = $indent . ' * @return mixed';
+        $param_str[] = $indent . ' */';
+
+        return [implode("\n", $param_str), implode(', ', $params)];
     }
 
     /**
@@ -228,28 +218,31 @@ class IdeHelperGenerator
 
             // methods
             foreach ($refClass->getMethods() as $refMethod) {
-                if($refMethod->isFinal()) continue;
-                $output .= $tab . $tab;
+                if($refMethod->isFinal()) {
+                    continue;
+                }
+                $props = $tab . $tab;
 
                 if ($refMethod->isPublic()) {
-                    $output .= 'public ';
+                    $props .= 'public ';
                 } elseif ($refMethod->isProtected()) {
-                    $output .= 'protected ';
+                    $props .= 'protected ';
                 } elseif ($refMethod->isPrivate()) {
-                    $output .= 'private ';
+                    $props .= 'private ';
                 }
 
                 if ($refMethod->isStatic()) {
-                    $output .= 'static ';
+                    $props .= 'static ';
                 }
 
-                if($refMethod->isConstructor() || $refMethod->isDestructor()) {
-                    $output .= sprintf('function %s (%s) {}', $refMethod->getName(),
-                            $this->getParamsString($refMethod)) . "\n";
-                } else {
-                    $output .= sprintf('function %s (%s) :NULL {}', $refMethod->getName(),
-                            $this->getParamsString($refMethod)) . "\n";
+                list($comment, $param_str) = $this->getFuncInfo($refMethod, $tab . $tab );
+                $body = '';
+                if($refMethod->getName() === '__toString') {
+                    $body = 'return "";';
+                }elseif ($refMethod->getName() === '__construct' && $refClass->getParentClass()) {
+                    $body = 'parent::__construct();';
                 }
+                $output .= sprintf("%s\n%sfunction %s (%s) {%s}\n\n", $comment, $props, $refMethod->getName(), $param_str, $body);
             }
 
             $output .= "{$tab}}\n";

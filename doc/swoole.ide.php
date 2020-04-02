@@ -8,27 +8,31 @@
  *
  * swoole
  * 
- * swoole support => enabled
- * Version => 4.2.1
- * Author => Swoole Group[email: team@swoole.com]
+ * Swoole => enabled
+ * Author => Swoole Team <team@swoole.com>
+ * Version => 4.4.16
+ * Built => Feb 20 2020 15:13:31
  * coroutine => enabled
  * epoll => enabled
  * eventfd => enabled
  * signalfd => enabled
  * spinlock => enabled
  * rwlock => enabled
+ * sockets => enabled
+ * openssl => OpenSSL 1.1.1d  10 Sep 2019
+ * http2 => enabled
  * pcre => enabled
+ * zlib => 1.2.11
  * mutex_timedlock => enabled
  * pthread_barrier => enabled
- * futex => enabled
+ * async_redis => enabled
  * 
  * Directive => Local Value => Master Value
  * swoole.enable_coroutine => On => On
- * swoole.aio_thread_num => 2 => 2
+ * swoole.enable_library => On => On
+ * swoole.enable_preemptive_scheduler => Off => Off
  * swoole.display_errors => On => On
- * swoole.use_namespace => On => On
  * swoole.use_shortname => On => On
- * swoole.fast_serialize => Off => Off
  * swoole.unixsock_buffer_size => 8388608 => 8388608
  * 
  */
@@ -38,9 +42,19 @@
  * ext constants:
  */
 
-defined('SWOOLE_BASE') or define('SWOOLE_BASE', 4);
-defined('SWOOLE_THREAD') or define('SWOOLE_THREAD', 2);
-defined('SWOOLE_PROCESS') or define('SWOOLE_PROCESS', 3);
+defined('SWOOLE_VERSION') or define('SWOOLE_VERSION', '4.4.16');
+defined('SWOOLE_VERSION_ID') or define('SWOOLE_VERSION_ID', 40416);
+defined('SWOOLE_MAJOR_VERSION') or define('SWOOLE_MAJOR_VERSION', 4);
+defined('SWOOLE_MINOR_VERSION') or define('SWOOLE_MINOR_VERSION', 4);
+defined('SWOOLE_RELEASE_VERSION') or define('SWOOLE_RELEASE_VERSION', 16);
+defined('SWOOLE_EXTRA_VERSION') or define('SWOOLE_EXTRA_VERSION', '');
+defined('SWOOLE_DEBUG') or define('SWOOLE_DEBUG', false);
+defined('SWOOLE_HAVE_COMPRESSION') or define('SWOOLE_HAVE_COMPRESSION', true);
+defined('SWOOLE_HAVE_ZLIB') or define('SWOOLE_HAVE_ZLIB', true);
+defined('SWOOLE_USE_HTTP2') or define('SWOOLE_USE_HTTP2', true);
+defined('SWOOLE_USE_SHORTNAME') or define('SWOOLE_USE_SHORTNAME', true);
+defined('SWOOLE_BASE') or define('SWOOLE_BASE', 1);
+defined('SWOOLE_PROCESS') or define('SWOOLE_PROCESS', 2);
 defined('SWOOLE_IPC_UNSOCK') or define('SWOOLE_IPC_UNSOCK', 1);
 defined('SWOOLE_IPC_MSGQUEUE') or define('SWOOLE_IPC_MSGQUEUE', 2);
 defined('SWOOLE_IPC_PREEMPTIVE') or define('SWOOLE_IPC_PREEMPTIVE', 3);
@@ -48,32 +62,60 @@ defined('SWOOLE_SOCK_TCP') or define('SWOOLE_SOCK_TCP', 1);
 defined('SWOOLE_SOCK_TCP6') or define('SWOOLE_SOCK_TCP6', 3);
 defined('SWOOLE_SOCK_UDP') or define('SWOOLE_SOCK_UDP', 2);
 defined('SWOOLE_SOCK_UDP6') or define('SWOOLE_SOCK_UDP6', 4);
-defined('SWOOLE_SOCK_UNIX_DGRAM') or define('SWOOLE_SOCK_UNIX_DGRAM', 5);
-defined('SWOOLE_SOCK_UNIX_STREAM') or define('SWOOLE_SOCK_UNIX_STREAM', 6);
+defined('SWOOLE_SOCK_UNIX_DGRAM') or define('SWOOLE_SOCK_UNIX_DGRAM', 6);
+defined('SWOOLE_SOCK_UNIX_STREAM') or define('SWOOLE_SOCK_UNIX_STREAM', 5);
 defined('SWOOLE_TCP') or define('SWOOLE_TCP', 1);
 defined('SWOOLE_TCP6') or define('SWOOLE_TCP6', 3);
 defined('SWOOLE_UDP') or define('SWOOLE_UDP', 2);
 defined('SWOOLE_UDP6') or define('SWOOLE_UDP6', 4);
-defined('SWOOLE_UNIX_DGRAM') or define('SWOOLE_UNIX_DGRAM', 5);
-defined('SWOOLE_UNIX_STREAM') or define('SWOOLE_UNIX_STREAM', 6);
-defined('SWOOLE_SOCK_SYNC') or define('SWOOLE_SOCK_SYNC', 0);
-defined('SWOOLE_SOCK_ASYNC') or define('SWOOLE_SOCK_ASYNC', 1);
+defined('SWOOLE_UNIX_DGRAM') or define('SWOOLE_UNIX_DGRAM', 6);
+defined('SWOOLE_UNIX_STREAM') or define('SWOOLE_UNIX_STREAM', 5);
+defined('SWOOLE_SOCK_SYNC') or define('SWOOLE_SOCK_SYNC', false);
+defined('SWOOLE_SOCK_ASYNC') or define('SWOOLE_SOCK_ASYNC', true);
 defined('SWOOLE_SYNC') or define('SWOOLE_SYNC', 2048);
 defined('SWOOLE_ASYNC') or define('SWOOLE_ASYNC', 1024);
 defined('SWOOLE_KEEP') or define('SWOOLE_KEEP', 4096);
+defined('SWOOLE_SSL') or define('SWOOLE_SSL', 512);
+defined('SWOOLE_SSLv3_METHOD') or define('SWOOLE_SSLv3_METHOD', 1);
+defined('SWOOLE_SSLv3_SERVER_METHOD') or define('SWOOLE_SSLv3_SERVER_METHOD', 2);
+defined('SWOOLE_SSLv3_CLIENT_METHOD') or define('SWOOLE_SSLv3_CLIENT_METHOD', 3);
+defined('SWOOLE_SSLv23_METHOD') or define('SWOOLE_SSLv23_METHOD', 0);
+defined('SWOOLE_SSLv23_SERVER_METHOD') or define('SWOOLE_SSLv23_SERVER_METHOD', 4);
+defined('SWOOLE_SSLv23_CLIENT_METHOD') or define('SWOOLE_SSLv23_CLIENT_METHOD', 5);
+defined('SWOOLE_TLSv1_METHOD') or define('SWOOLE_TLSv1_METHOD', 6);
+defined('SWOOLE_TLSv1_SERVER_METHOD') or define('SWOOLE_TLSv1_SERVER_METHOD', 7);
+defined('SWOOLE_TLSv1_CLIENT_METHOD') or define('SWOOLE_TLSv1_CLIENT_METHOD', 8);
+defined('SWOOLE_TLSv1_1_METHOD') or define('SWOOLE_TLSv1_1_METHOD', 9);
+defined('SWOOLE_TLSv1_1_SERVER_METHOD') or define('SWOOLE_TLSv1_1_SERVER_METHOD', 10);
+defined('SWOOLE_TLSv1_1_CLIENT_METHOD') or define('SWOOLE_TLSv1_1_CLIENT_METHOD', 11);
+defined('SWOOLE_TLSv1_2_METHOD') or define('SWOOLE_TLSv1_2_METHOD', 12);
+defined('SWOOLE_TLSv1_2_SERVER_METHOD') or define('SWOOLE_TLSv1_2_SERVER_METHOD', 13);
+defined('SWOOLE_TLSv1_2_CLIENT_METHOD') or define('SWOOLE_TLSv1_2_CLIENT_METHOD', 14);
+defined('SWOOLE_DTLSv1_METHOD') or define('SWOOLE_DTLSv1_METHOD', 15);
+defined('SWOOLE_DTLSv1_SERVER_METHOD') or define('SWOOLE_DTLSv1_SERVER_METHOD', 16);
+defined('SWOOLE_DTLSv1_CLIENT_METHOD') or define('SWOOLE_DTLSv1_CLIENT_METHOD', 17);
 defined('SWOOLE_EVENT_READ') or define('SWOOLE_EVENT_READ', 512);
 defined('SWOOLE_EVENT_WRITE') or define('SWOOLE_EVENT_WRITE', 1024);
-defined('SWOOLE_VERSION') or define('SWOOLE_VERSION', '4.2.1');
+defined('SWOOLE_STRERROR_SYSTEM') or define('SWOOLE_STRERROR_SYSTEM', 0);
+defined('SWOOLE_STRERROR_GAI') or define('SWOOLE_STRERROR_GAI', 1);
+defined('SWOOLE_STRERROR_DNS') or define('SWOOLE_STRERROR_DNS', 2);
+defined('SWOOLE_STRERROR_SWOOLE') or define('SWOOLE_STRERROR_SWOOLE', 9);
 defined('SWOOLE_ERROR_MALLOC_FAIL') or define('SWOOLE_ERROR_MALLOC_FAIL', 501);
 defined('SWOOLE_ERROR_SYSTEM_CALL_FAIL') or define('SWOOLE_ERROR_SYSTEM_CALL_FAIL', 502);
 defined('SWOOLE_ERROR_PHP_FATAL_ERROR') or define('SWOOLE_ERROR_PHP_FATAL_ERROR', 503);
 defined('SWOOLE_ERROR_NAME_TOO_LONG') or define('SWOOLE_ERROR_NAME_TOO_LONG', 504);
 defined('SWOOLE_ERROR_INVALID_PARAMS') or define('SWOOLE_ERROR_INVALID_PARAMS', 505);
+defined('SWOOLE_ERROR_QUEUE_FULL') or define('SWOOLE_ERROR_QUEUE_FULL', 506);
+defined('SWOOLE_ERROR_OPERATION_NOT_SUPPORT') or define('SWOOLE_ERROR_OPERATION_NOT_SUPPORT', 507);
+defined('SWOOLE_ERROR_PROTOCOL_ERROR') or define('SWOOLE_ERROR_PROTOCOL_ERROR', 508);
 defined('SWOOLE_ERROR_FILE_NOT_EXIST') or define('SWOOLE_ERROR_FILE_NOT_EXIST', 700);
 defined('SWOOLE_ERROR_FILE_TOO_LARGE') or define('SWOOLE_ERROR_FILE_TOO_LARGE', 701);
 defined('SWOOLE_ERROR_FILE_EMPTY') or define('SWOOLE_ERROR_FILE_EMPTY', 702);
 defined('SWOOLE_ERROR_DNSLOOKUP_DUPLICATE_REQUEST') or define('SWOOLE_ERROR_DNSLOOKUP_DUPLICATE_REQUEST', 703);
 defined('SWOOLE_ERROR_DNSLOOKUP_RESOLVE_FAILED') or define('SWOOLE_ERROR_DNSLOOKUP_RESOLVE_FAILED', 704);
+defined('SWOOLE_ERROR_DNSLOOKUP_RESOLVE_TIMEOUT') or define('SWOOLE_ERROR_DNSLOOKUP_RESOLVE_TIMEOUT', 705);
+defined('SWOOLE_ERROR_BAD_IPV6_ADDRESS') or define('SWOOLE_ERROR_BAD_IPV6_ADDRESS', 706);
+defined('SWOOLE_ERROR_UNREGISTERED_SIGNAL') or define('SWOOLE_ERROR_UNREGISTERED_SIGNAL', 707);
 defined('SWOOLE_ERROR_SESSION_CLOSED_BY_SERVER') or define('SWOOLE_ERROR_SESSION_CLOSED_BY_SERVER', 1001);
 defined('SWOOLE_ERROR_SESSION_CLOSED_BY_CLIENT') or define('SWOOLE_ERROR_SESSION_CLOSED_BY_CLIENT', 1002);
 defined('SWOOLE_ERROR_SESSION_CLOSING') or define('SWOOLE_ERROR_SESSION_CLOSING', 1003);
@@ -82,20 +124,28 @@ defined('SWOOLE_ERROR_SESSION_NOT_EXIST') or define('SWOOLE_ERROR_SESSION_NOT_EX
 defined('SWOOLE_ERROR_SESSION_INVALID_ID') or define('SWOOLE_ERROR_SESSION_INVALID_ID', 1006);
 defined('SWOOLE_ERROR_SESSION_DISCARD_TIMEOUT_DATA') or define('SWOOLE_ERROR_SESSION_DISCARD_TIMEOUT_DATA', 1007);
 defined('SWOOLE_ERROR_OUTPUT_BUFFER_OVERFLOW') or define('SWOOLE_ERROR_OUTPUT_BUFFER_OVERFLOW', 1008);
-defined('SWOOLE_ERROR_SSL_NOT_READY') or define('SWOOLE_ERROR_SSL_NOT_READY', 1009);
-defined('SWOOLE_ERROR_SSL_CANNOT_USE_SENFILE') or define('SWOOLE_ERROR_SSL_CANNOT_USE_SENFILE', 1010);
-defined('SWOOLE_ERROR_SSL_EMPTY_PEER_CERTIFICATE') or define('SWOOLE_ERROR_SSL_EMPTY_PEER_CERTIFICATE', 1011);
-defined('SWOOLE_ERROR_SSL_VEFIRY_FAILED') or define('SWOOLE_ERROR_SSL_VEFIRY_FAILED', 1012);
-defined('SWOOLE_ERROR_SSL_BAD_CLIENT') or define('SWOOLE_ERROR_SSL_BAD_CLIENT', 1013);
-defined('SWOOLE_ERROR_SSL_BAD_PROTOCOL') or define('SWOOLE_ERROR_SSL_BAD_PROTOCOL', 1014);
+defined('SWOOLE_ERROR_OUTPUT_SEND_YIELD') or define('SWOOLE_ERROR_OUTPUT_SEND_YIELD', 1009);
+defined('SWOOLE_ERROR_SSL_NOT_READY') or define('SWOOLE_ERROR_SSL_NOT_READY', 1010);
+defined('SWOOLE_ERROR_SSL_CANNOT_USE_SENFILE') or define('SWOOLE_ERROR_SSL_CANNOT_USE_SENFILE', 1011);
+defined('SWOOLE_ERROR_SSL_EMPTY_PEER_CERTIFICATE') or define('SWOOLE_ERROR_SSL_EMPTY_PEER_CERTIFICATE', 1012);
+defined('SWOOLE_ERROR_SSL_VEFIRY_FAILED') or define('SWOOLE_ERROR_SSL_VEFIRY_FAILED', 1013);
+defined('SWOOLE_ERROR_SSL_BAD_CLIENT') or define('SWOOLE_ERROR_SSL_BAD_CLIENT', 1014);
+defined('SWOOLE_ERROR_SSL_BAD_PROTOCOL') or define('SWOOLE_ERROR_SSL_BAD_PROTOCOL', 1015);
+defined('SWOOLE_ERROR_SSL_RESET') or define('SWOOLE_ERROR_SSL_RESET', 1016);
 defined('SWOOLE_ERROR_PACKAGE_LENGTH_TOO_LARGE') or define('SWOOLE_ERROR_PACKAGE_LENGTH_TOO_LARGE', 1201);
-defined('SWOOLE_ERROR_DATA_LENGTH_TOO_LARGE') or define('SWOOLE_ERROR_DATA_LENGTH_TOO_LARGE', 1202);
+defined('SWOOLE_ERROR_PACKAGE_LENGTH_NOT_FOUND') or define('SWOOLE_ERROR_PACKAGE_LENGTH_NOT_FOUND', 1202);
+defined('SWOOLE_ERROR_DATA_LENGTH_TOO_LARGE') or define('SWOOLE_ERROR_DATA_LENGTH_TOO_LARGE', 1203);
 defined('SWOOLE_ERROR_TASK_PACKAGE_TOO_BIG') or define('SWOOLE_ERROR_TASK_PACKAGE_TOO_BIG', 2001);
 defined('SWOOLE_ERROR_TASK_DISPATCH_FAIL') or define('SWOOLE_ERROR_TASK_DISPATCH_FAIL', 2002);
-defined('SWOOLE_ERROR_AIO_BAD_REQUEST') or define('SWOOLE_ERROR_AIO_BAD_REQUEST', 4001);
-defined('SWOOLE_ERROR_CLIENT_NO_CONNECTION') or define('SWOOLE_ERROR_CLIENT_NO_CONNECTION', 5001);
+defined('SWOOLE_ERROR_TASK_TIMEOUT') or define('SWOOLE_ERROR_TASK_TIMEOUT', 2003);
 defined('SWOOLE_ERROR_HTTP2_STREAM_ID_TOO_BIG') or define('SWOOLE_ERROR_HTTP2_STREAM_ID_TOO_BIG', 3001);
 defined('SWOOLE_ERROR_HTTP2_STREAM_NO_HEADER') or define('SWOOLE_ERROR_HTTP2_STREAM_NO_HEADER', 3002);
+defined('SWOOLE_ERROR_HTTP2_STREAM_NOT_FOUND') or define('SWOOLE_ERROR_HTTP2_STREAM_NOT_FOUND', 3003);
+defined('SWOOLE_ERROR_AIO_BAD_REQUEST') or define('SWOOLE_ERROR_AIO_BAD_REQUEST', 4001);
+defined('SWOOLE_ERROR_AIO_CANCELED') or define('SWOOLE_ERROR_AIO_CANCELED', 4002);
+defined('SWOOLE_ERROR_AIO_TIMEOUT') or define('SWOOLE_ERROR_AIO_TIMEOUT', 4003);
+defined('SWOOLE_ERROR_CLIENT_NO_CONNECTION') or define('SWOOLE_ERROR_CLIENT_NO_CONNECTION', 5001);
+defined('SWOOLE_ERROR_SOCKET_CLOSED') or define('SWOOLE_ERROR_SOCKET_CLOSED', 5002);
 defined('SWOOLE_ERROR_SOCKS5_UNSUPPORT_VERSION') or define('SWOOLE_ERROR_SOCKS5_UNSUPPORT_VERSION', 7001);
 defined('SWOOLE_ERROR_SOCKS5_UNSUPPORT_METHOD') or define('SWOOLE_ERROR_SOCKS5_UNSUPPORT_METHOD', 7002);
 defined('SWOOLE_ERROR_SOCKS5_AUTH_FAILED') or define('SWOOLE_ERROR_SOCKS5_AUTH_FAILED', 7003);
@@ -114,7 +164,24 @@ defined('SWOOLE_ERROR_SERVER_TOO_MANY_LISTEN_PORT') or define('SWOOLE_ERROR_SERV
 defined('SWOOLE_ERROR_SERVER_PIPE_BUFFER_FULL') or define('SWOOLE_ERROR_SERVER_PIPE_BUFFER_FULL', 9006);
 defined('SWOOLE_ERROR_SERVER_NO_IDLE_WORKER') or define('SWOOLE_ERROR_SERVER_NO_IDLE_WORKER', 9007);
 defined('SWOOLE_ERROR_SERVER_ONLY_START_ONE') or define('SWOOLE_ERROR_SERVER_ONLY_START_ONE', 9008);
-defined('SWOOLE_ERROR_SERVER_WORKER_EXIT_TIMEOUT') or define('SWOOLE_ERROR_SERVER_WORKER_EXIT_TIMEOUT', 9010);
+defined('SWOOLE_ERROR_SERVER_SEND_IN_MASTER') or define('SWOOLE_ERROR_SERVER_SEND_IN_MASTER', 9009);
+defined('SWOOLE_ERROR_SERVER_INVALID_REQUEST') or define('SWOOLE_ERROR_SERVER_INVALID_REQUEST', 9010);
+defined('SWOOLE_ERROR_SERVER_CONNECT_FAIL') or define('SWOOLE_ERROR_SERVER_CONNECT_FAIL', 9011);
+defined('SWOOLE_ERROR_SERVER_WORKER_EXIT_TIMEOUT') or define('SWOOLE_ERROR_SERVER_WORKER_EXIT_TIMEOUT', 9012);
+defined('SWOOLE_ERROR_CO_OUT_OF_COROUTINE') or define('SWOOLE_ERROR_CO_OUT_OF_COROUTINE', 10001);
+defined('SWOOLE_ERROR_CO_HAS_BEEN_BOUND') or define('SWOOLE_ERROR_CO_HAS_BEEN_BOUND', 10002);
+defined('SWOOLE_ERROR_CO_HAS_BEEN_DISCARDED') or define('SWOOLE_ERROR_CO_HAS_BEEN_DISCARDED', 10003);
+defined('SWOOLE_ERROR_CO_MUTEX_DOUBLE_UNLOCK') or define('SWOOLE_ERROR_CO_MUTEX_DOUBLE_UNLOCK', 10004);
+defined('SWOOLE_ERROR_CO_BLOCK_OBJECT_LOCKED') or define('SWOOLE_ERROR_CO_BLOCK_OBJECT_LOCKED', 10005);
+defined('SWOOLE_ERROR_CO_BLOCK_OBJECT_WAITING') or define('SWOOLE_ERROR_CO_BLOCK_OBJECT_WAITING', 10006);
+defined('SWOOLE_ERROR_CO_YIELD_FAILED') or define('SWOOLE_ERROR_CO_YIELD_FAILED', 10007);
+defined('SWOOLE_ERROR_CO_GETCONTEXT_FAILED') or define('SWOOLE_ERROR_CO_GETCONTEXT_FAILED', 10008);
+defined('SWOOLE_ERROR_CO_SWAPCONTEXT_FAILED') or define('SWOOLE_ERROR_CO_SWAPCONTEXT_FAILED', 10009);
+defined('SWOOLE_ERROR_CO_MAKECONTEXT_FAILED') or define('SWOOLE_ERROR_CO_MAKECONTEXT_FAILED', 10010);
+defined('SWOOLE_ERROR_CO_IOCPINIT_FAILED') or define('SWOOLE_ERROR_CO_IOCPINIT_FAILED', 10011);
+defined('SWOOLE_ERROR_CO_PROTECT_STACK_FAILED') or define('SWOOLE_ERROR_CO_PROTECT_STACK_FAILED', 10012);
+defined('SWOOLE_ERROR_CO_STD_THREAD_LINK_ERROR') or define('SWOOLE_ERROR_CO_STD_THREAD_LINK_ERROR', 10013);
+defined('SWOOLE_ERROR_CO_DISABLED_MULTI_THREAD') or define('SWOOLE_ERROR_CO_DISABLED_MULTI_THREAD', 10014);
 defined('SWOOLE_TRACE_SERVER') or define('SWOOLE_TRACE_SERVER', 2);
 defined('SWOOLE_TRACE_CLIENT') or define('SWOOLE_TRACE_CLIENT', 4);
 defined('SWOOLE_TRACE_BUFFER') or define('SWOOLE_TRACE_BUFFER', 8);
@@ -123,15 +190,23 @@ defined('SWOOLE_TRACE_EVENT') or define('SWOOLE_TRACE_EVENT', 32);
 defined('SWOOLE_TRACE_WORKER') or define('SWOOLE_TRACE_WORKER', 64);
 defined('SWOOLE_TRACE_REACTOR') or define('SWOOLE_TRACE_REACTOR', 256);
 defined('SWOOLE_TRACE_PHP') or define('SWOOLE_TRACE_PHP', 512);
-defined('SWOOLE_TRACE_HTTP2') or define('SWOOLE_TRACE_HTTP2', 1024);
-defined('SWOOLE_TRACE_EOF_PROTOCOL') or define('SWOOLE_TRACE_EOF_PROTOCOL', 2048);
-defined('SWOOLE_TRACE_LENGTH_PROTOCOL') or define('SWOOLE_TRACE_LENGTH_PROTOCOL', 4096);
-defined('SWOOLE_TRACE_CLOSE') or define('SWOOLE_TRACE_CLOSE', 8192);
-defined('SWOOLE_TRACE_HTTP_CLIENT') or define('SWOOLE_TRACE_HTTP_CLIENT', 16384);
-defined('SWOOLE_TRACE_COROUTINE') or define('SWOOLE_TRACE_COROUTINE', 32768);
+defined('SWOOLE_TRACE_HTTP') or define('SWOOLE_TRACE_HTTP', 1024);
+defined('SWOOLE_TRACE_HTTP2') or define('SWOOLE_TRACE_HTTP2', 2048);
+defined('SWOOLE_TRACE_EOF_PROTOCOL') or define('SWOOLE_TRACE_EOF_PROTOCOL', 4096);
+defined('SWOOLE_TRACE_LENGTH_PROTOCOL') or define('SWOOLE_TRACE_LENGTH_PROTOCOL', 8192);
+defined('SWOOLE_TRACE_CLOSE') or define('SWOOLE_TRACE_CLOSE', 16384);
 defined('SWOOLE_TRACE_REDIS_CLIENT') or define('SWOOLE_TRACE_REDIS_CLIENT', 65536);
 defined('SWOOLE_TRACE_MYSQL_CLIENT') or define('SWOOLE_TRACE_MYSQL_CLIENT', 131072);
-defined('SWOOLE_TRACE_AIO') or define('SWOOLE_TRACE_AIO', 262144);
+defined('SWOOLE_TRACE_HTTP_CLIENT') or define('SWOOLE_TRACE_HTTP_CLIENT', 262144);
+defined('SWOOLE_TRACE_AIO') or define('SWOOLE_TRACE_AIO', 524288);
+defined('SWOOLE_TRACE_SSL') or define('SWOOLE_TRACE_SSL', 1048576);
+defined('SWOOLE_TRACE_NORMAL') or define('SWOOLE_TRACE_NORMAL', 2097152);
+defined('SWOOLE_TRACE_CHANNEL') or define('SWOOLE_TRACE_CHANNEL', 4194304);
+defined('SWOOLE_TRACE_TIMER') or define('SWOOLE_TRACE_TIMER', 8388608);
+defined('SWOOLE_TRACE_SOCKET') or define('SWOOLE_TRACE_SOCKET', 16777216);
+defined('SWOOLE_TRACE_COROUTINE') or define('SWOOLE_TRACE_COROUTINE', 33554432);
+defined('SWOOLE_TRACE_CONTEXT') or define('SWOOLE_TRACE_CONTEXT', 67108864);
+defined('SWOOLE_TRACE_CO_HTTP_SERVER') or define('SWOOLE_TRACE_CO_HTTP_SERVER', 134217728);
 defined('SWOOLE_TRACE_ALL') or define('SWOOLE_TRACE_ALL', 4294967295);
 defined('SWOOLE_LOG_DEBUG') or define('SWOOLE_LOG_DEBUG', 0);
 defined('SWOOLE_LOG_TRACE') or define('SWOOLE_LOG_TRACE', 1);
@@ -139,50 +214,139 @@ defined('SWOOLE_LOG_INFO') or define('SWOOLE_LOG_INFO', 2);
 defined('SWOOLE_LOG_NOTICE') or define('SWOOLE_LOG_NOTICE', 3);
 defined('SWOOLE_LOG_WARNING') or define('SWOOLE_LOG_WARNING', 4);
 defined('SWOOLE_LOG_ERROR') or define('SWOOLE_LOG_ERROR', 5);
+defined('SWOOLE_LOG_NONE') or define('SWOOLE_LOG_NONE', 6);
 defined('SWOOLE_IPC_NONE') or define('SWOOLE_IPC_NONE', 0);
 defined('SWOOLE_IPC_UNIXSOCK') or define('SWOOLE_IPC_UNIXSOCK', 1);
 defined('SWOOLE_IPC_SOCKET') or define('SWOOLE_IPC_SOCKET', 3);
-defined('SWOOLE_EXIT_IN_COROUTINE') or define('SWOOLE_EXIT_IN_COROUTINE', 2);
-defined('SWOOLE_EXIT_IN_SERVER') or define('SWOOLE_EXIT_IN_SERVER', 4);
-defined('SWOOLE_AIO_BASE') or define('SWOOLE_AIO_BASE', 0);
-defined('SWOOLE_AIO_LINUX') or define('SWOOLE_AIO_LINUX', 0);
-defined('SIGHUP') or define('SIGHUP', 1);
-defined('SIGINT') or define('SIGINT', 2);
-defined('SIGQUIT') or define('SIGQUIT', 3);
-defined('SIGILL') or define('SIGILL', 4);
-defined('SIGTRAP') or define('SIGTRAP', 5);
-defined('SIGABRT') or define('SIGABRT', 6);
-defined('SIGBUS') or define('SIGBUS', 7);
-defined('SIGFPE') or define('SIGFPE', 8);
-defined('SIGKILL') or define('SIGKILL', 9);
-defined('SIGUSR1') or define('SIGUSR1', 10);
-defined('SIGSEGV') or define('SIGSEGV', 11);
-defined('SIGUSR2') or define('SIGUSR2', 12);
-defined('SIGPIPE') or define('SIGPIPE', 13);
-defined('SIGALRM') or define('SIGALRM', 14);
-defined('SIGTERM') or define('SIGTERM', 15);
-defined('SIGSTKFLT') or define('SIGSTKFLT', 16);
-defined('SIGCHLD') or define('SIGCHLD', 17);
-defined('SIGCONT') or define('SIGCONT', 18);
-defined('SIGSTOP') or define('SIGSTOP', 19);
-defined('SIGTSTP') or define('SIGTSTP', 20);
-defined('SIGTTIN') or define('SIGTTIN', 21);
-defined('SIGTTOU') or define('SIGTTOU', 22);
-defined('SIGURG') or define('SIGURG', 23);
-defined('SIGXCPU') or define('SIGXCPU', 24);
-defined('SIGXFSZ') or define('SIGXFSZ', 25);
-defined('SIGVTALRM') or define('SIGVTALRM', 26);
-defined('SIGPROF') or define('SIGPROF', 27);
-defined('SIGWINCH') or define('SIGWINCH', 28);
-defined('SIGIO') or define('SIGIO', 29);
-defined('SIGPWR') or define('SIGPWR', 30);
-defined('SIGSYS') or define('SIGSYS', 31);
-defined('SIG_IGN') or define('SIG_IGN', 1);
 defined('SWOOLE_FILELOCK') or define('SWOOLE_FILELOCK', 2);
 defined('SWOOLE_MUTEX') or define('SWOOLE_MUTEX', 3);
 defined('SWOOLE_SEM') or define('SWOOLE_SEM', 4);
 defined('SWOOLE_RWLOCK') or define('SWOOLE_RWLOCK', 1);
 defined('SWOOLE_SPINLOCK') or define('SWOOLE_SPINLOCK', 5);
+defined('SWOOLE_TIMER_MIN_MS') or define('SWOOLE_TIMER_MIN_MS', 1);
+defined('SWOOLE_TIMER_MIN_SEC') or define('SWOOLE_TIMER_MIN_SEC', 0.001);
+defined('SWOOLE_TIMER_MAX_MS') or define('SWOOLE_TIMER_MAX_MS', 9223372036854775807);
+defined('SWOOLE_TIMER_MAX_SEC') or define('SWOOLE_TIMER_MAX_SEC', 9223372036854776.0);
+defined('SWOOLE_DEFAULT_MAX_CORO_NUM') or define('SWOOLE_DEFAULT_MAX_CORO_NUM', 100000);
+defined('SWOOLE_CORO_MAX_NUM_LIMIT') or define('SWOOLE_CORO_MAX_NUM_LIMIT', 9223372036854775807);
+defined('SWOOLE_CORO_INIT') or define('SWOOLE_CORO_INIT', 0);
+defined('SWOOLE_CORO_WAITING') or define('SWOOLE_CORO_WAITING', 1);
+defined('SWOOLE_CORO_RUNNING') or define('SWOOLE_CORO_RUNNING', 2);
+defined('SWOOLE_CORO_END') or define('SWOOLE_CORO_END', 3);
+defined('SWOOLE_EXIT_IN_COROUTINE') or define('SWOOLE_EXIT_IN_COROUTINE', 2);
+defined('SWOOLE_EXIT_IN_SERVER') or define('SWOOLE_EXIT_IN_SERVER', 4);
+defined('SWOOLE_CHANNEL_OK') or define('SWOOLE_CHANNEL_OK', 0);
+defined('SWOOLE_CHANNEL_TIMEOUT') or define('SWOOLE_CHANNEL_TIMEOUT', -1);
+defined('SWOOLE_CHANNEL_CLOSED') or define('SWOOLE_CHANNEL_CLOSED', -2);
+defined('SWOOLE_HOOK_TCP') or define('SWOOLE_HOOK_TCP', 2);
+defined('SWOOLE_HOOK_UDP') or define('SWOOLE_HOOK_UDP', 4);
+defined('SWOOLE_HOOK_UNIX') or define('SWOOLE_HOOK_UNIX', 8);
+defined('SWOOLE_HOOK_UDG') or define('SWOOLE_HOOK_UDG', 16);
+defined('SWOOLE_HOOK_SSL') or define('SWOOLE_HOOK_SSL', 32);
+defined('SWOOLE_HOOK_TLS') or define('SWOOLE_HOOK_TLS', 64);
+defined('SWOOLE_HOOK_STREAM_FUNCTION') or define('SWOOLE_HOOK_STREAM_FUNCTION', 128);
+defined('SWOOLE_HOOK_STREAM_SELECT') or define('SWOOLE_HOOK_STREAM_SELECT', 128);
+defined('SWOOLE_HOOK_FILE') or define('SWOOLE_HOOK_FILE', 256);
+defined('SWOOLE_HOOK_SLEEP') or define('SWOOLE_HOOK_SLEEP', 512);
+defined('SWOOLE_HOOK_PROC') or define('SWOOLE_HOOK_PROC', 1024);
+defined('SWOOLE_HOOK_CURL') or define('SWOOLE_HOOK_CURL', 268435456);
+defined('SWOOLE_HOOK_BLOCKING_FUNCTION') or define('SWOOLE_HOOK_BLOCKING_FUNCTION', 1073741824);
+defined('SWOOLE_HOOK_ALL') or define('SWOOLE_HOOK_ALL', 1879048191);
+defined('SOCKET_ECANCELED') or define('SOCKET_ECANCELED', 125);
+defined('SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED') or define('SWOOLE_HTTP_CLIENT_ESTATUS_CONNECT_FAILED', -1);
+defined('SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT') or define('SWOOLE_HTTP_CLIENT_ESTATUS_REQUEST_TIMEOUT', -2);
+defined('SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET') or define('SWOOLE_HTTP_CLIENT_ESTATUS_SERVER_RESET', -3);
+defined('SWOOLE_MYSQLND_CR_UNKNOWN_ERROR') or define('SWOOLE_MYSQLND_CR_UNKNOWN_ERROR', 2000);
+defined('SWOOLE_MYSQLND_CR_CONNECTION_ERROR') or define('SWOOLE_MYSQLND_CR_CONNECTION_ERROR', 2002);
+defined('SWOOLE_MYSQLND_CR_SERVER_GONE_ERROR') or define('SWOOLE_MYSQLND_CR_SERVER_GONE_ERROR', 2006);
+defined('SWOOLE_MYSQLND_CR_OUT_OF_MEMORY') or define('SWOOLE_MYSQLND_CR_OUT_OF_MEMORY', 2008);
+defined('SWOOLE_MYSQLND_CR_SERVER_LOST') or define('SWOOLE_MYSQLND_CR_SERVER_LOST', 2013);
+defined('SWOOLE_MYSQLND_CR_COMMANDS_OUT_OF_SYNC') or define('SWOOLE_MYSQLND_CR_COMMANDS_OUT_OF_SYNC', 2014);
+defined('SWOOLE_MYSQLND_CR_CANT_FIND_CHARSET') or define('SWOOLE_MYSQLND_CR_CANT_FIND_CHARSET', 2019);
+defined('SWOOLE_MYSQLND_CR_MALFORMED_PACKET') or define('SWOOLE_MYSQLND_CR_MALFORMED_PACKET', 2027);
+defined('SWOOLE_MYSQLND_CR_NOT_IMPLEMENTED') or define('SWOOLE_MYSQLND_CR_NOT_IMPLEMENTED', 2054);
+defined('SWOOLE_MYSQLND_CR_NO_PREPARE_STMT') or define('SWOOLE_MYSQLND_CR_NO_PREPARE_STMT', 2030);
+defined('SWOOLE_MYSQLND_CR_PARAMS_NOT_BOUND') or define('SWOOLE_MYSQLND_CR_PARAMS_NOT_BOUND', 2031);
+defined('SWOOLE_MYSQLND_CR_INVALID_PARAMETER_NO') or define('SWOOLE_MYSQLND_CR_INVALID_PARAMETER_NO', 2034);
+defined('SWOOLE_MYSQLND_CR_INVALID_BUFFER_USE') or define('SWOOLE_MYSQLND_CR_INVALID_BUFFER_USE', 2035);
+defined('SWOOLE_REDIS_MODE_MULTI') or define('SWOOLE_REDIS_MODE_MULTI', 0);
+defined('SWOOLE_REDIS_MODE_PIPELINE') or define('SWOOLE_REDIS_MODE_PIPELINE', 1);
+defined('SWOOLE_REDIS_TYPE_NOT_FOUND') or define('SWOOLE_REDIS_TYPE_NOT_FOUND', 0);
+defined('SWOOLE_REDIS_TYPE_STRING') or define('SWOOLE_REDIS_TYPE_STRING', 1);
+defined('SWOOLE_REDIS_TYPE_SET') or define('SWOOLE_REDIS_TYPE_SET', 2);
+defined('SWOOLE_REDIS_TYPE_LIST') or define('SWOOLE_REDIS_TYPE_LIST', 3);
+defined('SWOOLE_REDIS_TYPE_ZSET') or define('SWOOLE_REDIS_TYPE_ZSET', 4);
+defined('SWOOLE_REDIS_TYPE_HASH') or define('SWOOLE_REDIS_TYPE_HASH', 5);
+defined('SWOOLE_REDIS_ERR_IO') or define('SWOOLE_REDIS_ERR_IO', 1);
+defined('SWOOLE_REDIS_ERR_OTHER') or define('SWOOLE_REDIS_ERR_OTHER', 2);
+defined('SWOOLE_REDIS_ERR_EOF') or define('SWOOLE_REDIS_ERR_EOF', 3);
+defined('SWOOLE_REDIS_ERR_PROTOCOL') or define('SWOOLE_REDIS_ERR_PROTOCOL', 4);
+defined('SWOOLE_REDIS_ERR_OOM') or define('SWOOLE_REDIS_ERR_OOM', 5);
+defined('SWOOLE_REDIS_ERR_CLOSED') or define('SWOOLE_REDIS_ERR_CLOSED', 6);
+defined('SWOOLE_REDIS_ERR_NOAUTH') or define('SWOOLE_REDIS_ERR_NOAUTH', 7);
+defined('SWOOLE_REDIS_ERR_ALLOC') or define('SWOOLE_REDIS_ERR_ALLOC', 8);
+defined('SWOOLE_HTTP2_TYPE_DATA') or define('SWOOLE_HTTP2_TYPE_DATA', 0);
+defined('SWOOLE_HTTP2_TYPE_HEADERS') or define('SWOOLE_HTTP2_TYPE_HEADERS', 1);
+defined('SWOOLE_HTTP2_TYPE_PRIORITY') or define('SWOOLE_HTTP2_TYPE_PRIORITY', 2);
+defined('SWOOLE_HTTP2_TYPE_RST_STREAM') or define('SWOOLE_HTTP2_TYPE_RST_STREAM', 3);
+defined('SWOOLE_HTTP2_TYPE_SETTINGS') or define('SWOOLE_HTTP2_TYPE_SETTINGS', 4);
+defined('SWOOLE_HTTP2_TYPE_PUSH_PROMISE') or define('SWOOLE_HTTP2_TYPE_PUSH_PROMISE', 5);
+defined('SWOOLE_HTTP2_TYPE_PING') or define('SWOOLE_HTTP2_TYPE_PING', 6);
+defined('SWOOLE_HTTP2_TYPE_GOAWAY') or define('SWOOLE_HTTP2_TYPE_GOAWAY', 7);
+defined('SWOOLE_HTTP2_TYPE_WINDOW_UPDATE') or define('SWOOLE_HTTP2_TYPE_WINDOW_UPDATE', 8);
+defined('SWOOLE_HTTP2_TYPE_CONTINUATION') or define('SWOOLE_HTTP2_TYPE_CONTINUATION', 9);
+defined('SWOOLE_HTTP2_ERROR_NO_ERROR') or define('SWOOLE_HTTP2_ERROR_NO_ERROR', 0);
+defined('SWOOLE_HTTP2_ERROR_PROTOCOL_ERROR') or define('SWOOLE_HTTP2_ERROR_PROTOCOL_ERROR', 1);
+defined('SWOOLE_HTTP2_ERROR_INTERNAL_ERROR') or define('SWOOLE_HTTP2_ERROR_INTERNAL_ERROR', 2);
+defined('SWOOLE_HTTP2_ERROR_FLOW_CONTROL_ERROR') or define('SWOOLE_HTTP2_ERROR_FLOW_CONTROL_ERROR', 3);
+defined('SWOOLE_HTTP2_ERROR_SETTINGS_TIMEOUT') or define('SWOOLE_HTTP2_ERROR_SETTINGS_TIMEOUT', 4);
+defined('SWOOLE_HTTP2_ERROR_STREAM_CLOSED') or define('SWOOLE_HTTP2_ERROR_STREAM_CLOSED', 5);
+defined('SWOOLE_HTTP2_ERROR_FRAME_SIZE_ERROR') or define('SWOOLE_HTTP2_ERROR_FRAME_SIZE_ERROR', 6);
+defined('SWOOLE_HTTP2_ERROR_REFUSED_STREAM') or define('SWOOLE_HTTP2_ERROR_REFUSED_STREAM', 7);
+defined('SWOOLE_HTTP2_ERROR_CANCEL') or define('SWOOLE_HTTP2_ERROR_CANCEL', 8);
+defined('SWOOLE_HTTP2_ERROR_COMPRESSION_ERROR') or define('SWOOLE_HTTP2_ERROR_COMPRESSION_ERROR', 9);
+defined('SWOOLE_HTTP2_ERROR_CONNECT_ERROR') or define('SWOOLE_HTTP2_ERROR_CONNECT_ERROR', 10);
+defined('SWOOLE_HTTP2_ERROR_ENHANCE_YOUR_CALM') or define('SWOOLE_HTTP2_ERROR_ENHANCE_YOUR_CALM', 11);
+defined('SWOOLE_HTTP2_ERROR_INADEQUATE_SECURITY') or define('SWOOLE_HTTP2_ERROR_INADEQUATE_SECURITY', 12);
+defined('SWOOLE_DISPATCH_RESULT_DISCARD_PACKET') or define('SWOOLE_DISPATCH_RESULT_DISCARD_PACKET', -1);
+defined('SWOOLE_DISPATCH_RESULT_CLOSE_CONNECTION') or define('SWOOLE_DISPATCH_RESULT_CLOSE_CONNECTION', -2);
+defined('SWOOLE_DISPATCH_RESULT_USERFUNC_FALLBACK') or define('SWOOLE_DISPATCH_RESULT_USERFUNC_FALLBACK', -3);
+defined('SWOOLE_TASK_TMPFILE') or define('SWOOLE_TASK_TMPFILE', 1);
+defined('SWOOLE_TASK_SERIALIZE') or define('SWOOLE_TASK_SERIALIZE', 2);
+defined('SWOOLE_TASK_NONBLOCK') or define('SWOOLE_TASK_NONBLOCK', 4);
+defined('SWOOLE_TASK_CALLBACK') or define('SWOOLE_TASK_CALLBACK', 8);
+defined('SWOOLE_TASK_WAITALL') or define('SWOOLE_TASK_WAITALL', 16);
+defined('SWOOLE_TASK_COROUTINE') or define('SWOOLE_TASK_COROUTINE', 32);
+defined('SWOOLE_TASK_PEEK') or define('SWOOLE_TASK_PEEK', 64);
+defined('SWOOLE_TASK_NOREPLY') or define('SWOOLE_TASK_NOREPLY', 128);
+defined('SWOOLE_WEBSOCKET_STATUS_CONNECTION') or define('SWOOLE_WEBSOCKET_STATUS_CONNECTION', 1);
+defined('SWOOLE_WEBSOCKET_STATUS_HANDSHAKE') or define('SWOOLE_WEBSOCKET_STATUS_HANDSHAKE', 2);
+defined('SWOOLE_WEBSOCKET_STATUS_ACTIVE') or define('SWOOLE_WEBSOCKET_STATUS_ACTIVE', 3);
+defined('SWOOLE_WEBSOCKET_STATUS_CLOSING') or define('SWOOLE_WEBSOCKET_STATUS_CLOSING', 4);
+defined('SWOOLE_WEBSOCKET_OPCODE_CONTINUATION') or define('SWOOLE_WEBSOCKET_OPCODE_CONTINUATION', 0);
+defined('SWOOLE_WEBSOCKET_OPCODE_TEXT') or define('SWOOLE_WEBSOCKET_OPCODE_TEXT', 1);
+defined('SWOOLE_WEBSOCKET_OPCODE_BINARY') or define('SWOOLE_WEBSOCKET_OPCODE_BINARY', 2);
+defined('SWOOLE_WEBSOCKET_OPCODE_CLOSE') or define('SWOOLE_WEBSOCKET_OPCODE_CLOSE', 8);
+defined('SWOOLE_WEBSOCKET_OPCODE_PING') or define('SWOOLE_WEBSOCKET_OPCODE_PING', 9);
+defined('SWOOLE_WEBSOCKET_OPCODE_PONG') or define('SWOOLE_WEBSOCKET_OPCODE_PONG', 10);
+defined('SWOOLE_WEBSOCKET_FLAG_FIN') or define('SWOOLE_WEBSOCKET_FLAG_FIN', 1);
+defined('SWOOLE_WEBSOCKET_FLAG_RSV1') or define('SWOOLE_WEBSOCKET_FLAG_RSV1', 4);
+defined('SWOOLE_WEBSOCKET_FLAG_RSV2') or define('SWOOLE_WEBSOCKET_FLAG_RSV2', 8);
+defined('SWOOLE_WEBSOCKET_FLAG_RSV3') or define('SWOOLE_WEBSOCKET_FLAG_RSV3', 16);
+defined('SWOOLE_WEBSOCKET_FLAG_MASK') or define('SWOOLE_WEBSOCKET_FLAG_MASK', 32);
+defined('SWOOLE_WEBSOCKET_FLAG_COMPRESS') or define('SWOOLE_WEBSOCKET_FLAG_COMPRESS', 2);
+defined('SWOOLE_WEBSOCKET_CLOSE_NORMAL') or define('SWOOLE_WEBSOCKET_CLOSE_NORMAL', 1000);
+defined('SWOOLE_WEBSOCKET_CLOSE_GOING_AWAY') or define('SWOOLE_WEBSOCKET_CLOSE_GOING_AWAY', 1001);
+defined('SWOOLE_WEBSOCKET_CLOSE_PROTOCOL_ERROR') or define('SWOOLE_WEBSOCKET_CLOSE_PROTOCOL_ERROR', 1002);
+defined('SWOOLE_WEBSOCKET_CLOSE_DATA_ERROR') or define('SWOOLE_WEBSOCKET_CLOSE_DATA_ERROR', 1003);
+defined('SWOOLE_WEBSOCKET_CLOSE_STATUS_ERROR') or define('SWOOLE_WEBSOCKET_CLOSE_STATUS_ERROR', 1005);
+defined('SWOOLE_WEBSOCKET_CLOSE_ABNORMAL') or define('SWOOLE_WEBSOCKET_CLOSE_ABNORMAL', 1006);
+defined('SWOOLE_WEBSOCKET_CLOSE_MESSAGE_ERROR') or define('SWOOLE_WEBSOCKET_CLOSE_MESSAGE_ERROR', 1007);
+defined('SWOOLE_WEBSOCKET_CLOSE_POLICY_ERROR') or define('SWOOLE_WEBSOCKET_CLOSE_POLICY_ERROR', 1008);
+defined('SWOOLE_WEBSOCKET_CLOSE_MESSAGE_TOO_BIG') or define('SWOOLE_WEBSOCKET_CLOSE_MESSAGE_TOO_BIG', 1009);
+defined('SWOOLE_WEBSOCKET_CLOSE_EXTENSION_MISSING') or define('SWOOLE_WEBSOCKET_CLOSE_EXTENSION_MISSING', 1010);
+defined('SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR') or define('SWOOLE_WEBSOCKET_CLOSE_SERVER_ERROR', 1011);
+defined('SWOOLE_WEBSOCKET_CLOSE_TLS') or define('SWOOLE_WEBSOCKET_CLOSE_TLS', 1015);
 defined('WEBSOCKET_STATUS_CONNECTION') or define('WEBSOCKET_STATUS_CONNECTION', 1);
 defined('WEBSOCKET_STATUS_HANDSHAKE') or define('WEBSOCKET_STATUS_HANDSHAKE', 2);
 defined('WEBSOCKET_STATUS_FRAME') or define('WEBSOCKET_STATUS_FRAME', 3);
@@ -206,186 +370,258 @@ defined('WEBSOCKET_CLOSE_MESSAGE_TOO_BIG') or define('WEBSOCKET_CLOSE_MESSAGE_TO
 defined('WEBSOCKET_CLOSE_EXTENSION_MISSING') or define('WEBSOCKET_CLOSE_EXTENSION_MISSING', 1010);
 defined('WEBSOCKET_CLOSE_SERVER_ERROR') or define('WEBSOCKET_CLOSE_SERVER_ERROR', 1011);
 defined('WEBSOCKET_CLOSE_TLS') or define('WEBSOCKET_CLOSE_TLS', 1015);
-defined('SWOOLE_FAST_PACK') or define('SWOOLE_FAST_PACK', 1);
-defined('UNSERIALIZE_OBJECT_TO_ARRAY') or define('UNSERIALIZE_OBJECT_TO_ARRAY', 1);
-defined('UNSERIALIZE_OBJECT_TO_STDCLASS') or define('UNSERIALIZE_OBJECT_TO_STDCLASS', 2);
 
 
 /**
  * ext functions:
  */
 
-function swoole_version () :NULL {}
-function swoole_cpu_num () :NULL {}
-function swoole_last_error () :NULL {}
-function swoole_event_add ($fd, $read_callback, $write_callback = NULL, $events = NULL) :NULL {}
-function swoole_event_set ($fd, $read_callback = NULL, $write_callback = NULL, $events = NULL) :NULL {}
-function swoole_event_del ($fd) :NULL {}
-function swoole_event_exit () :NULL {}
-function swoole_event_wait () :NULL {}
-function swoole_event_write ($fd, $data) :NULL {}
-function swoole_event_defer ($callback) :NULL {}
-function swoole_event_cycle ($callback, $before = NULL) :NULL {}
-function swoole_event_dispatch () :NULL {}
-function swoole_event_isset ($fd, $events = NULL) :NULL {}
-function swoole_timer_after ($ms, $callback, $param = NULL) :NULL {}
-function swoole_timer_tick ($ms, $callback) :NULL {}
-function swoole_timer_exists ($timer_id) :NULL {}
-function swoole_timer_clear ($timer_id) :NULL {}
-function swoole_async_set (array $settings) :NULL {}
-function swoole_async_read ($filename, $callback, $chunk_size = NULL, $offset = NULL) :NULL {}
-function swoole_async_write ($filename, $content, $offset = NULL, $callback = NULL) :NULL {}
-function swoole_async_readfile ($filename, $callback) :NULL {}
-function swoole_async_writefile ($filename, $content, $callback = NULL, $flags = NULL) :NULL {}
-function swoole_async_dns_lookup ($hostname, $callback) :NULL {}
-function swoole_async_dns_lookup_coro ($domain_name) :NULL {}
-function swoole_coroutine_create ($func) :NULL {}
-function swoole_coroutine_exec ($command) :NULL {}
-function go ($func) :NULL {}
-function swoole_client_select (&$read_array, &$write_array, &$error_array, $timeout = NULL) :NULL {}
-function swoole_select (&$read_array, &$write_array, &$error_array, $timeout = NULL) :NULL {}
-function swoole_set_process_name ($process_name) :NULL {}
-function swoole_get_local_ip () :NULL {}
-function swoole_get_local_mac () :NULL {}
-function swoole_strerror ($errno, $error_type = NULL) :NULL {}
-function swoole_errno () :NULL {}
-function swoole_hashcode ($data, $type = NULL) :NULL {}
-function swoole_call_user_shutdown_begin () :NULL {}
+/**
+ * @return mixed
+ */
+function swoole_version () {}
+
+/**
+ * @return mixed
+ */
+function swoole_cpu_num () {}
+
+/**
+ * @return mixed
+ */
+function swoole_last_error () {}
+
+/**
+ * @param  $domain_name
+ * @param  $timeout
+ * @return mixed
+ */
+function swoole_async_dns_lookup_coro ($domain_name, $timeout = NULL) {}
+
+/**
+ * @param array $settings
+ * @return mixed
+ */
+function swoole_async_set ($settings) {}
+
+/**
+ * @param callable $func
+ * @param  $params
+ * @return mixed
+ */
+function swoole_coroutine_create ($func, $params = NULL) {}
+
+/**
+ * @param callable $callback
+ * @return mixed
+ */
+function swoole_coroutine_defer ($callback) {}
+
+/**
+ * @param  $read_array
+ * @param  $write_array
+ * @param  $error_array
+ * @param  $timeout
+ * @return mixed
+ */
+function swoole_client_select (&$read_array, &$write_array, &$error_array, $timeout = NULL) {}
+
+/**
+ * @param  $read_array
+ * @param  $write_array
+ * @param  $error_array
+ * @param  $timeout
+ * @return mixed
+ */
+function swoole_select (&$read_array, &$write_array, &$error_array, $timeout = NULL) {}
+
+/**
+ * @param  $process_name
+ * @return mixed
+ */
+function swoole_set_process_name ($process_name) {}
+
+/**
+ * @return mixed
+ */
+function swoole_get_local_ip () {}
+
+/**
+ * @return mixed
+ */
+function swoole_get_local_mac () {}
+
+/**
+ * @param  $errno
+ * @param  $error_type
+ * @return mixed
+ */
+function swoole_strerror ($errno, $error_type = NULL) {}
+
+/**
+ * @return mixed
+ */
+function swoole_errno () {}
+
+/**
+ * @param  $data
+ * @param  $type
+ * @return mixed
+ */
+function swoole_hashcode ($data, $type = NULL) {}
+
+/**
+ * @param  $filename
+ * @return mixed
+ */
+function swoole_get_mime_type ($filename) {}
+
+/**
+ * @return mixed
+ */
+function swoole_clear_dns_cache () {}
+
+/**
+ * @return mixed
+ */
+function swoole_internal_call_user_shutdown_begin () {}
+
+/**
+ * @param callable $func
+ * @return mixed
+ */
+function go ($func) {}
+
+/**
+ * @param callable $callback
+ * @return mixed
+ */
+function defer ($callback) {}
+
+/**
+ * @param  $fd
+ * @param callable $read_callback
+ * @param callable $write_callback
+ * @param  $events
+ * @return mixed
+ */
+function swoole_event_add ($fd, $read_callback, $write_callback = NULL, $events = NULL) {}
+
+/**
+ * @param  $fd
+ * @return mixed
+ */
+function swoole_event_del ($fd) {}
+
+/**
+ * @param  $fd
+ * @param callable $read_callback
+ * @param callable $write_callback
+ * @param  $events
+ * @return mixed
+ */
+function swoole_event_set ($fd, $read_callback = NULL, $write_callback = NULL, $events = NULL) {}
+
+/**
+ * @param  $fd
+ * @param  $events
+ * @return mixed
+ */
+function swoole_event_isset ($fd, $events = NULL) {}
+
+/**
+ * @return mixed
+ */
+function swoole_event_dispatch () {}
+
+/**
+ * @param callable $callback
+ * @return mixed
+ */
+function swoole_event_defer ($callback) {}
+
+/**
+ * @param callable $callback
+ * @param  $before
+ * @return mixed
+ */
+function swoole_event_cycle ($callback, $before = NULL) {}
+
+/**
+ * @param  $fd
+ * @param  $data
+ * @return mixed
+ */
+function swoole_event_write ($fd, $data) {}
+
+/**
+ * @return mixed
+ */
+function swoole_event_wait () {}
+
+/**
+ * @return mixed
+ */
+function swoole_event_exit () {}
+
+/**
+ * @param array $settings
+ * @return mixed
+ */
+function swoole_timer_set ($settings) {}
+
+/**
+ * @param  $ms
+ * @param callable $callback
+ * @return mixed
+ */
+function swoole_timer_after ($ms, $callback) {}
+
+/**
+ * @param  $ms
+ * @param callable $callback
+ * @return mixed
+ */
+function swoole_timer_tick ($ms, $callback) {}
+
+/**
+ * @param  $timer_id
+ * @return mixed
+ */
+function swoole_timer_exists ($timer_id) {}
+
+/**
+ * @param  $timer_id
+ * @return mixed
+ */
+function swoole_timer_info ($timer_id) {}
+
+/**
+ * @return mixed
+ */
+function swoole_timer_stats () {}
+
+/**
+ * @return mixed
+ */
+function swoole_timer_list () {}
+
+/**
+ * @param  $timer_id
+ * @return mixed
+ */
+function swoole_timer_clear ($timer_id) {}
+
+/**
+ * @return mixed
+ */
+function swoole_timer_clear_all () {}
+
 
 
 /**
  * ext classes:
  */
-
-namespace Swoole {
-    class Server {
-
-        public $onConnect;
-        public $onReceive;
-        public $onClose;
-        public $onPacket;
-        public $onBufferFull;
-        public $onBufferEmpty;
-        public $onStart;
-        public $onShutdown;
-        public $onWorkerStart;
-        public $onWorkerStop;
-        public $onWorkerExit;
-        public $onWorkerError;
-        public $onTask;
-        public $onFinish;
-        public $onManagerStart;
-        public $onManagerStop;
-        public $onPipeMessage;
-        public $setting;
-        public $connections;
-        public $host;
-        public $port;
-        public $type;
-        public $mode;
-        public $ports;
-        public $master_pid;
-        public $manager_pid;
-        public $worker_id;
-        public $taskworker;
-        public $worker_pid;
-
-        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
-        public function __destruct () {}
-        public function listen ($host, $port, $sock_type) :NULL {}
-        public function addlistener ($host, $port, $sock_type) :NULL {}
-        public function on ($event_name, $callback) :NULL {}
-        public function set (array $settings) :NULL {}
-        public function start () :NULL {}
-        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
-        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
-        public function sendwait ($conn_fd, $send_data) :NULL {}
-        public function exist ($fd) :NULL {}
-        public function protect ($fd, $is_protected = NULL) :NULL {}
-        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
-        public function close ($fd, $reset = NULL) :NULL {}
-        public function confirm ($fd) :NULL {}
-        public function pause ($fd) :NULL {}
-        public function resume ($fd) :NULL {}
-        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
-        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
-        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
-        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
-        public function finish ($data) :NULL {}
-        public function reload () :NULL {}
-        public function shutdown () :NULL {}
-        public function stop ($worker_id = NULL) :NULL {}
-        public function getLastError () :NULL {}
-        public function heartbeat ($reactor_id) :NULL {}
-        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
-        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
-        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
-        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
-        public function after ($ms, $callback, $param = NULL) :NULL {}
-        public function tick ($ms, $callback) :NULL {}
-        public function clearTimer ($timer_id) :NULL {}
-        public function defer ($callback) :NULL {}
-        public function sendMessage ($message, $dst_worker_id) :NULL {}
-        public function addProcess (\swoole_process $process) :NULL {}
-        public function stats () :NULL {}
-        public function bind ($fd, $uid) :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Timer {
-
-        public static function tick ($ms, $callback) :NULL {}
-        public static function after ($ms, $callback, $param = NULL) :NULL {}
-        public static function exists ($timer_id) :NULL {}
-        public static function clear ($timer_id) :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Event {
-
-        public static function add ($fd, $read_callback, $write_callback = NULL, $events = NULL) :NULL {}
-        public static function del ($fd) :NULL {}
-        public static function set ($fd, $read_callback = NULL, $write_callback = NULL, $events = NULL) :NULL {}
-        public static function exit () :NULL {}
-        public static function write ($fd, $data) :NULL {}
-        public static function wait () :NULL {}
-        public static function defer ($callback) :NULL {}
-        public static function cycle ($callback, $before = NULL) :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Async {
-
-        public static function read ($filename, $callback, $chunk_size = NULL, $offset = NULL) :NULL {}
-        public static function write ($filename, $content, $offset = NULL, $callback = NULL) :NULL {}
-        public static function readFile ($filename, $callback) :NULL {}
-        public static function writeFile ($filename, $content, $callback = NULL, $flags = NULL) :NULL {}
-        public static function dnsLookup ($hostname, $callback) :NULL {}
-        public static function dnsLookupCoro ($domain_name) :NULL {}
-        public static function set (array $settings) :NULL {}
-        public static function exec ($command, $callback) :NULL {}
-    }
-}
-
-namespace Swoole\Connection {
-    class Iterator {
-
-        public function rewind () :NULL {}
-        public function next () :NULL {}
-        public function current () :NULL {}
-        public function key () :NULL {}
-        public function valid () :NULL {}
-        public function count () :NULL {}
-        public function __destruct () {}
-        public function offsetExists ($fd) :NULL {}
-        public function offsetGet ($fd) :NULL {}
-        public function offsetSet ($fd, $value) :NULL {}
-        public function offsetUnset ($fd) :NULL {}
-    }
-}
 
 namespace Swoole {
     class Exception extends \Exception {
@@ -395,36 +631,1836 @@ namespace Swoole {
         protected $file;
         protected $line;
 
-        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
-        public function __wakeup () :NULL {}
-        public function __toString () :NULL {}
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
     }
 }
 
-namespace Swoole\Server {
-    class Port {
+namespace Swoole {
+    class Error extends \Error {
 
-        public $onConnect;
-        public $onReceive;
-        public $onClose;
-        public $onPacket;
-        public $onBufferFull;
-        public $onBufferEmpty;
-        public $onRequest;
-        public $onHandShake;
-        public $onMessage;
-        public $onOpen;
-        public $host;
-        public $port;
-        public $type;
-        public $sock;
-        public $setting;
-        public $connections;
+        protected $message;
+        protected $code;
+        protected $file;
+        protected $line;
 
-        private function __construct () {}
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
+    }
+}
+
+namespace Swoole {
+    class Event {
+
+        /**
+         * @param  $fd
+         * @param callable $read_callback
+         * @param callable $write_callback
+         * @param  $events
+         * @return mixed
+         */
+        public static function add ($fd, $read_callback, $write_callback = NULL, $events = NULL) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public static function del ($fd) {}
+
+        /**
+         * @param  $fd
+         * @param callable $read_callback
+         * @param callable $write_callback
+         * @param  $events
+         * @return mixed
+         */
+        public static function set ($fd, $read_callback = NULL, $write_callback = NULL, $events = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $events
+         * @return mixed
+         */
+        public static function isset ($fd, $events = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public static function dispatch () {}
+
+        /**
+         * @param callable $callback
+         * @return mixed
+         */
+        public static function defer ($callback) {}
+
+        /**
+         * @param callable $callback
+         * @param  $before
+         * @return mixed
+         */
+        public static function cycle ($callback, $before = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $data
+         * @return mixed
+         */
+        public static function write ($fd, $data) {}
+
+        /**
+         * @return mixed
+         */
+        public static function wait () {}
+
+        /**
+         * @return mixed
+         */
+        public static function rshutdown () {}
+
+        /**
+         * @return mixed
+         */
+        public static function exit () {}
+
+    }
+}
+
+namespace Swoole {
+    class Atomic {
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function __construct ($value = NULL) {}
+
+        /**
+         * @param  $add_value
+         * @return mixed
+         */
+        public function add ($add_value = NULL) {}
+
+        /**
+         * @param  $sub_value
+         * @return mixed
+         */
+        public function sub ($sub_value = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function get () {}
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function set ($value) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function wait ($timeout = NULL) {}
+
+        /**
+         * @param  $count
+         * @return mixed
+         */
+        public function wakeup ($count = NULL) {}
+
+        /**
+         * @param  $cmp_value
+         * @param  $new_value
+         * @return mixed
+         */
+        public function cmpset ($cmp_value, $new_value) {}
+
+    }
+}
+
+namespace Swoole\Atomic {
+    class Long {
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function __construct ($value = NULL) {}
+
+        /**
+         * @param  $add_value
+         * @return mixed
+         */
+        public function add ($add_value = NULL) {}
+
+        /**
+         * @param  $sub_value
+         * @return mixed
+         */
+        public function sub ($sub_value = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function get () {}
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function set ($value) {}
+
+        /**
+         * @param  $cmp_value
+         * @param  $new_value
+         * @return mixed
+         */
+        public function cmpset ($cmp_value, $new_value) {}
+
+    }
+}
+
+namespace Swoole {
+    class Buffer {
+
+        public $capacity;
+        public $length;
+
+        /**
+         * @param  $size
+         * @return mixed
+         */
+        public function __construct ($size = NULL) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function set (array $settings) :NULL {}
-        public function on ($event_name, $callback) :NULL {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
+        /**
+         * @param  $offset
+         * @param  $length
+         * @param  $remove
+         * @return mixed
+         */
+        public function substr ($offset, $length = NULL, $remove = NULL) {}
+
+        /**
+         * @param  $offset
+         * @param  $data
+         * @return mixed
+         */
+        public function write ($offset, $data) {}
+
+        /**
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function read ($offset, $length) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function append ($data) {}
+
+        /**
+         * @param  $size
+         * @return mixed
+         */
+        public function expand ($size) {}
+
+        /**
+         * @return mixed
+         */
+        public function recycle () {}
+
+        /**
+         * @return mixed
+         */
+        public function clear () {}
+
+    }
+}
+
+namespace Swoole {
+    class Lock {
+        const FILELOCK = 2;
+        const MUTEX = 3;
+        const SEM = 4;
+        const RWLOCK = 1;
+        const SPINLOCK = 5;
+
+        public $errCode;
+
+        /**
+         * @param  $type
+         * @param  $filename
+         * @return mixed
+         */
+        public function __construct ($type = NULL, $filename = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @return mixed
+         */
+        public function lock () {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function lockwait ($timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function trylock () {}
+
+        /**
+         * @return mixed
+         */
+        public function lock_read () {}
+
+        /**
+         * @return mixed
+         */
+        public function trylock_read () {}
+
+        /**
+         * @return mixed
+         */
+        public function unlock () {}
+
+        /**
+         * @return mixed
+         */
+        public function destroy () {}
+
+    }
+}
+
+namespace Swoole {
+    class Process {
+        const IPC_NOWAIT = 256;
+        const PIPE_MASTER = 1;
+        const PIPE_WORKER = 2;
+        const PIPE_READ = 3;
+        const PIPE_WRITE = 4;
+
+        public $pipe;
+        public $msgQueueId;
+        public $msgQueueKey;
+        public $pid;
+        public $id;
+        private $callback;
+
+        /**
+         * @param callable $callback
+         * @param  $redirect_stdin_and_stdout
+         * @param  $pipe_type
+         * @param  $enable_coroutine
+         * @return mixed
+         */
+        public function __construct ($callback, $redirect_stdin_and_stdout = NULL, $pipe_type = NULL, $enable_coroutine = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @param  $blocking
+         * @return mixed
+         */
+        public static function wait ($blocking = NULL) {}
+
+        /**
+         * @param  $signal_no
+         * @param  $callback
+         * @return mixed
+         */
+        public static function signal ($signal_no, $callback) {}
+
+        /**
+         * @param  $usec
+         * @param  $type
+         * @return mixed
+         */
+        public static function alarm ($usec, $type = NULL) {}
+
+        /**
+         * @param  $pid
+         * @param  $signal_no
+         * @return mixed
+         */
+        public static function kill ($pid, $signal_no = NULL) {}
+
+        /**
+         * @param  $nochdir
+         * @param  $noclose
+         * @param  $pipes
+         * @return mixed
+         */
+        public static function daemon ($nochdir = NULL, $noclose = NULL, $pipes = NULL) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @param  $seconds
+         * @return mixed
+         */
+        public function setTimeout ($seconds) {}
+
+        /**
+         * @param  $blocking
+         * @return mixed
+         */
+        public function setBlocking ($blocking) {}
+
+        /**
+         * @param  $key
+         * @param  $mode
+         * @param  $capacity
+         * @return mixed
+         */
+        public function useQueue ($key = NULL, $mode = NULL, $capacity = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function statQueue () {}
+
+        /**
+         * @return mixed
+         */
+        public function freeQueue () {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function write ($data) {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+        /**
+         * @param  $size
+         * @return mixed
+         */
+        public function read ($size = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function push ($data) {}
+
+        /**
+         * @param  $size
+         * @return mixed
+         */
+        public function pop ($size = NULL) {}
+
+        /**
+         * @param  $exit_code
+         * @return mixed
+         */
+        public function exit ($exit_code = NULL) {}
+
+        /**
+         * @param  $exec_file
+         * @param  $args
+         * @return mixed
+         */
+        public function exec ($exec_file, $args) {}
+
+        /**
+         * @return mixed
+         */
+        public function exportSocket () {}
+
+        /**
+         * @param  $process_name
+         * @return mixed
+         */
+        public function name ($process_name) {}
+
+    }
+}
+
+namespace Swoole\Process {
+    class Pool {
+
+        public $master_pid;
+        public $workers;
+
+        /**
+         * @param  $worker_num
+         * @param  $ipc_type
+         * @param  $msgqueue_key
+         * @param  $enable_coroutine
+         * @return mixed
+         */
+        public function __construct ($worker_num, $ipc_type = NULL, $msgqueue_key = NULL, $enable_coroutine = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @param  $event_name
+         * @param callable $callback
+         * @return mixed
+         */
+        public function on ($event_name, $callback) {}
+
+        /**
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function getProcess ($worker_id = NULL) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $backlog
+         * @return mixed
+         */
+        public function listen ($host, $port = NULL, $backlog = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function write ($data) {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @return mixed
+         */
+        public function shutdown () {}
+
+    }
+}
+
+namespace Swoole {
+    class Table {
+        const TYPE_INT = 1;
+        const TYPE_STRING = 7;
+        const TYPE_FLOAT = 6;
+
+        /**
+         * @param  $table_size
+         * @param  $conflict_proportion
+         * @return mixed
+         */
+        public function __construct ($table_size, $conflict_proportion = NULL) {}
+
+        /**
+         * @param  $name
+         * @param  $type
+         * @param  $size
+         * @return mixed
+         */
+        public function column ($name, $type, $size = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function create () {}
+
+        /**
+         * @return mixed
+         */
+        public function destroy () {}
+
+        /**
+         * @param  $key
+         * @param array $value
+         * @return mixed
+         */
+        public function set ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $field
+         * @return mixed
+         */
+        public function get ($key, $field = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function count () {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function del ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function exists ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function exist ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $column
+         * @param  $incrby
+         * @return mixed
+         */
+        public function incr ($key, $column, $incrby = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $column
+         * @param  $decrby
+         * @return mixed
+         */
+        public function decr ($key, $column, $decrby = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getMemorySize () {}
+
+        /**
+         * @param  $offset
+         * @return mixed
+         */
+        public function offsetExists ($offset) {}
+
+        /**
+         * @param  $offset
+         * @return mixed
+         */
+        public function offsetGet ($offset) {}
+
+        /**
+         * @param  $offset
+         * @param  $value
+         * @return mixed
+         */
+        public function offsetSet ($offset, $value) {}
+
+        /**
+         * @param  $offset
+         * @return mixed
+         */
+        public function offsetUnset ($offset) {}
+
+        /**
+         * @return mixed
+         */
+        public function rewind () {}
+
+        /**
+         * @return mixed
+         */
+        public function next () {}
+
+        /**
+         * @return mixed
+         */
+        public function current () {}
+
+        /**
+         * @return mixed
+         */
+        public function key () {}
+
+        /**
+         * @return mixed
+         */
+        public function valid () {}
+
+    }
+}
+
+namespace Swoole\Table {
+    class Row {
+
+        public $key;
+        public $value;
+
+        /**
+         * @param  $offset
+         * @return mixed
+         */
+        public function offsetExists ($offset) {}
+
+        /**
+         * @param  $offset
+         * @return mixed
+         */
+        public function offsetGet ($offset) {}
+
+        /**
+         * @param  $offset
+         * @param  $value
+         * @return mixed
+         */
+        public function offsetSet ($offset, $value) {}
+
+        /**
+         * @param  $offset
+         * @return mixed
+         */
+        public function offsetUnset ($offset) {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+    }
+}
+
+namespace Swoole {
+    class Timer {
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public static function set ($settings) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @param  $params
+         * @return mixed
+         */
+        public static function tick ($ms, $callback, $params = NULL) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @param  $params
+         * @return mixed
+         */
+        public static function after ($ms, $callback, $params = NULL) {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public static function exists ($timer_id) {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public static function info ($timer_id) {}
+
+        /**
+         * @return mixed
+         */
+        public static function stats () {}
+
+        /**
+         * @return mixed
+         */
+        public static function list () {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public static function clear ($timer_id) {}
+
+        /**
+         * @return mixed
+         */
+        public static function clearAll () {}
+
+    }
+}
+
+namespace Swoole\Timer {
+    class Iterator extends \ArrayIterator {
+        const STD_PROP_LIST = 1;
+        const ARRAY_AS_PROPS = 2;
+
+        /**
+         * @param  $array
+         * @param  $ar_flags
+         * @return mixed
+         */
+        public function __construct ($array = NULL, $ar_flags = NULL) {parent::__construct();}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetExists ($index) {}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetGet ($index) {}
+
+        /**
+         * @param  $index
+         * @param  $newval
+         * @return mixed
+         */
+        public function offsetSet ($index, $newval) {}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetUnset ($index) {}
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function append ($value) {}
+
+        /**
+         * @return mixed
+         */
+        public function getArrayCopy () {}
+
+        /**
+         * @return mixed
+         */
+        public function count () {}
+
+        /**
+         * @return mixed
+         */
+        public function getFlags () {}
+
+        /**
+         * @param  $flags
+         * @return mixed
+         */
+        public function setFlags ($flags) {}
+
+        /**
+         * @return mixed
+         */
+        public function asort () {}
+
+        /**
+         * @return mixed
+         */
+        public function ksort () {}
+
+        /**
+         * @param  $cmp_function
+         * @return mixed
+         */
+        public function uasort ($cmp_function) {}
+
+        /**
+         * @param  $cmp_function
+         * @return mixed
+         */
+        public function uksort ($cmp_function) {}
+
+        /**
+         * @return mixed
+         */
+        public function natsort () {}
+
+        /**
+         * @return mixed
+         */
+        public function natcasesort () {}
+
+        /**
+         * @param  $serialized
+         * @return mixed
+         */
+        public function unserialize ($serialized) {}
+
+        /**
+         * @return mixed
+         */
+        public function serialize () {}
+
+        /**
+         * @return mixed
+         */
+        public function rewind () {}
+
+        /**
+         * @return mixed
+         */
+        public function current () {}
+
+        /**
+         * @return mixed
+         */
+        public function key () {}
+
+        /**
+         * @return mixed
+         */
+        public function next () {}
+
+        /**
+         * @return mixed
+         */
+        public function valid () {}
+
+        /**
+         * @param  $position
+         * @return mixed
+         */
+        public function seek ($position) {}
+
+    }
+}
+
+namespace Swoole {
+    class Coroutine {
+
+        /**
+         * @param callable $func
+         * @param  $params
+         * @return mixed
+         */
+        public static function create ($func, $params = NULL) {}
+
+        /**
+         * @param  $callback
+         * @return mixed
+         */
+        public static function defer ($callback) {}
+
+        /**
+         * @param  $options
+         * @return mixed
+         */
+        public static function set ($options) {}
+
+        /**
+         * @param  $cid
+         * @return mixed
+         */
+        public static function exists ($cid) {}
+
+        /**
+         * @return mixed
+         */
+        public static function yield () {}
+
+        /**
+         * @return mixed
+         */
+        public static function suspend () {}
+
+        /**
+         * @param  $cid
+         * @return mixed
+         */
+        public static function resume ($cid) {}
+
+        /**
+         * @return mixed
+         */
+        public static function stats () {}
+
+        /**
+         * @return mixed
+         */
+        public static function getCid () {}
+
+        /**
+         * @return mixed
+         */
+        public static function getuid () {}
+
+        /**
+         * @param  $cid
+         * @return mixed
+         */
+        public static function getPcid ($cid = NULL) {}
+
+        /**
+         * @param  $cid
+         * @return mixed
+         */
+        public static function getContext ($cid = NULL) {}
+
+        /**
+         * @param  $cid
+         * @param  $options
+         * @param  $limit
+         * @return mixed
+         */
+        public static function getBackTrace ($cid = NULL, $options = NULL, $limit = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public static function list () {}
+
+        /**
+         * @return mixed
+         */
+        public static function listCoroutines () {}
+
+        /**
+         * @return mixed
+         */
+        public static function enableScheduler () {}
+
+        /**
+         * @return mixed
+         */
+        public static function disableScheduler () {}
+
+        /**
+         * @param  $domain_name
+         * @param  $family
+         * @param  $timeout
+         * @return mixed
+         */
+        public static function gethostbyname ($domain_name, $family = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $domain_name
+         * @param  $timeout
+         * @return mixed
+         */
+        public static function dnsLookup ($domain_name, $timeout = NULL) {}
+
+        /**
+         * @param  $command
+         * @param  $get_error_stream
+         * @return mixed
+         */
+        public static function exec ($command, $get_error_stream = NULL) {}
+
+        /**
+         * @param  $seconds
+         * @return mixed
+         */
+        public static function sleep ($seconds) {}
+
+        /**
+         * @param  $handle
+         * @param  $length
+         * @return mixed
+         */
+        public static function fread ($handle, $length = NULL) {}
+
+        /**
+         * @param  $handle
+         * @return mixed
+         */
+        public static function fgets ($handle) {}
+
+        /**
+         * @param  $handle
+         * @param  $string
+         * @param  $length
+         * @return mixed
+         */
+        public static function fwrite ($handle, $string, $length = NULL) {}
+
+        /**
+         * @param  $filename
+         * @return mixed
+         */
+        public static function readFile ($filename) {}
+
+        /**
+         * @param  $filename
+         * @param  $data
+         * @param  $flags
+         * @return mixed
+         */
+        public static function writeFile ($filename, $data, $flags = NULL) {}
+
+        /**
+         * @param  $hostname
+         * @param  $family
+         * @param  $socktype
+         * @param  $protocol
+         * @param  $service
+         * @param  $timeout
+         * @return mixed
+         */
+        public static function getaddrinfo ($hostname, $family = NULL, $socktype = NULL, $protocol = NULL, $service = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $path
+         * @return mixed
+         */
+        public static function statvfs ($path) {}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    class Iterator extends \ArrayIterator {
+        const STD_PROP_LIST = 1;
+        const ARRAY_AS_PROPS = 2;
+
+        /**
+         * @param  $array
+         * @param  $ar_flags
+         * @return mixed
+         */
+        public function __construct ($array = NULL, $ar_flags = NULL) {parent::__construct();}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetExists ($index) {}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetGet ($index) {}
+
+        /**
+         * @param  $index
+         * @param  $newval
+         * @return mixed
+         */
+        public function offsetSet ($index, $newval) {}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetUnset ($index) {}
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function append ($value) {}
+
+        /**
+         * @return mixed
+         */
+        public function getArrayCopy () {}
+
+        /**
+         * @return mixed
+         */
+        public function count () {}
+
+        /**
+         * @return mixed
+         */
+        public function getFlags () {}
+
+        /**
+         * @param  $flags
+         * @return mixed
+         */
+        public function setFlags ($flags) {}
+
+        /**
+         * @return mixed
+         */
+        public function asort () {}
+
+        /**
+         * @return mixed
+         */
+        public function ksort () {}
+
+        /**
+         * @param  $cmp_function
+         * @return mixed
+         */
+        public function uasort ($cmp_function) {}
+
+        /**
+         * @param  $cmp_function
+         * @return mixed
+         */
+        public function uksort ($cmp_function) {}
+
+        /**
+         * @return mixed
+         */
+        public function natsort () {}
+
+        /**
+         * @return mixed
+         */
+        public function natcasesort () {}
+
+        /**
+         * @param  $serialized
+         * @return mixed
+         */
+        public function unserialize ($serialized) {}
+
+        /**
+         * @return mixed
+         */
+        public function serialize () {}
+
+        /**
+         * @return mixed
+         */
+        public function rewind () {}
+
+        /**
+         * @return mixed
+         */
+        public function current () {}
+
+        /**
+         * @return mixed
+         */
+        public function key () {}
+
+        /**
+         * @return mixed
+         */
+        public function next () {}
+
+        /**
+         * @return mixed
+         */
+        public function valid () {}
+
+        /**
+         * @param  $position
+         * @return mixed
+         */
+        public function seek ($position) {}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    class Context extends \ArrayObject {
+        const STD_PROP_LIST = 1;
+        const ARRAY_AS_PROPS = 2;
+
+        /**
+         * @param  $input
+         * @param  $flags
+         * @param  $iterator_class
+         * @return mixed
+         */
+        public function __construct ($input = NULL, $flags = NULL, $iterator_class = NULL) {parent::__construct();}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetExists ($index) {}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetGet ($index) {}
+
+        /**
+         * @param  $index
+         * @param  $newval
+         * @return mixed
+         */
+        public function offsetSet ($index, $newval) {}
+
+        /**
+         * @param  $index
+         * @return mixed
+         */
+        public function offsetUnset ($index) {}
+
+        /**
+         * @param  $value
+         * @return mixed
+         */
+        public function append ($value) {}
+
+        /**
+         * @return mixed
+         */
+        public function getArrayCopy () {}
+
+        /**
+         * @return mixed
+         */
+        public function count () {}
+
+        /**
+         * @return mixed
+         */
+        public function getFlags () {}
+
+        /**
+         * @param  $flags
+         * @return mixed
+         */
+        public function setFlags ($flags) {}
+
+        /**
+         * @return mixed
+         */
+        public function asort () {}
+
+        /**
+         * @return mixed
+         */
+        public function ksort () {}
+
+        /**
+         * @param  $cmp_function
+         * @return mixed
+         */
+        public function uasort ($cmp_function) {}
+
+        /**
+         * @param  $cmp_function
+         * @return mixed
+         */
+        public function uksort ($cmp_function) {}
+
+        /**
+         * @return mixed
+         */
+        public function natsort () {}
+
+        /**
+         * @return mixed
+         */
+        public function natcasesort () {}
+
+        /**
+         * @param  $serialized
+         * @return mixed
+         */
+        public function unserialize ($serialized) {}
+
+        /**
+         * @return mixed
+         */
+        public function serialize () {}
+
+        /**
+         * @return mixed
+         */
+        public function getIterator () {}
+
+        /**
+         * @param  $array
+         * @return mixed
+         */
+        public function exchangeArray ($array) {}
+
+        /**
+         * @param  $iteratorClass
+         * @return mixed
+         */
+        public function setIteratorClass ($iteratorClass) {}
+
+        /**
+         * @return mixed
+         */
+        public function getIteratorClass () {}
+
+    }
+}
+
+namespace Swoole {
+    class ExitException extends \Swoole\Exception {
+
+        protected $message;
+        protected $code;
+        protected $file;
+        protected $line;
+        private $flags;
+        private $status;
+
+        /**
+         * @return mixed
+         */
+        public function getFlags () {}
+
+        /**
+         * @return mixed
+         */
+        public function getStatus () {}
+
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    class System {
+
+        /**
+         * @param  $domain_name
+         * @param  $family
+         * @param  $timeout
+         * @return mixed
+         */
+        public static function gethostbyname ($domain_name, $family = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $domain_name
+         * @param  $timeout
+         * @return mixed
+         */
+        public static function dnsLookup ($domain_name, $timeout = NULL) {}
+
+        /**
+         * @param  $command
+         * @param  $get_error_stream
+         * @return mixed
+         */
+        public static function exec ($command, $get_error_stream = NULL) {}
+
+        /**
+         * @param  $seconds
+         * @return mixed
+         */
+        public static function sleep ($seconds) {}
+
+        /**
+         * @param  $handle
+         * @param  $length
+         * @return mixed
+         */
+        public static function fread ($handle, $length = NULL) {}
+
+        /**
+         * @param  $handle
+         * @param  $string
+         * @param  $length
+         * @return mixed
+         */
+        public static function fwrite ($handle, $string, $length = NULL) {}
+
+        /**
+         * @param  $handle
+         * @return mixed
+         */
+        public static function fgets ($handle) {}
+
+        /**
+         * @param  $hostname
+         * @param  $family
+         * @param  $socktype
+         * @param  $protocol
+         * @param  $service
+         * @param  $timeout
+         * @return mixed
+         */
+        public static function getaddrinfo ($hostname, $family = NULL, $socktype = NULL, $protocol = NULL, $service = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $filename
+         * @return mixed
+         */
+        public static function readFile ($filename) {}
+
+        /**
+         * @param  $filename
+         * @param  $data
+         * @param  $flags
+         * @return mixed
+         */
+        public static function writeFile ($filename, $data, $flags = NULL) {}
+
+        /**
+         * @param  $path
+         * @return mixed
+         */
+        public static function statvfs ($path) {}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    final class Scheduler {
+
+        /**
+         * @param callable $func
+         * @param  $params
+         * @return mixed
+         */
+        public function add ($func, $params = NULL) {}
+
+        /**
+         * @param  $n
+         * @param callable $func
+         * @param  $params
+         * @return mixed
+         */
+        public function parallel ($n, $func = NULL, $params = NULL) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    class Channel {
+
+        public $capacity;
+        public $errCode;
+
+        /**
+         * @param  $size
+         * @return mixed
+         */
+        public function __construct ($size = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @return mixed
+         */
+        public function push ($data, $timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function pop ($timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function isEmpty () {}
+
+        /**
+         * @return mixed
+         */
+        public function isFull () {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+        /**
+         * @return mixed
+         */
+        public function stats () {}
+
+        /**
+         * @return mixed
+         */
+        public function length () {}
+
+    }
+}
+
+namespace Swoole {
+    class Runtime {
+
+        /**
+         * @return mixed
+         */
+        public static function enableStrictMode () {}
+
+        /**
+         * @param  $enable
+         * @param  $flags
+         * @return mixed
+         */
+        public static function enableCoroutine ($enable = NULL, $flags = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public static function getHookFlags () {}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    class Socket {
+
+        public $fd;
+        public $errCode;
+        public $errMsg;
+
+        /**
+         * @param  $domain
+         * @param  $type
+         * @param  $protocol
+         * @return mixed
+         */
+        public function __construct ($domain, $type, $protocol = NULL) {}
+
+        /**
+         * @param  $address
+         * @param  $port
+         * @return mixed
+         */
+        public function bind ($address, $port = NULL) {}
+
+        /**
+         * @param  $backlog
+         * @return mixed
+         */
+        public function listen ($backlog = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function accept ($timeout = NULL) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $timeout
+         * @return mixed
+         */
+        public function connect ($host, $port = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $length
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recv ($length = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recvPacket ($timeout = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @return mixed
+         */
+        public function send ($data, $timeout = NULL) {}
+
+        /**
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendFile ($filename, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $length
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recvAll ($length = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @return mixed
+         */
+        public function sendAll ($data, $timeout = NULL) {}
+
+        /**
+         * @param  $peername
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recvfrom (&$peername, $timeout = NULL) {}
+
+        /**
+         * @param  $addr
+         * @param  $port
+         * @param  $data
+         * @return mixed
+         */
+        public function sendto ($addr, $port, $data) {}
+
+        /**
+         * @param  $level
+         * @param  $opt_name
+         * @return mixed
+         */
+        public function getOption ($level, $opt_name) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function setProtocol ($settings) {}
+
+        /**
+         * @param  $level
+         * @param  $opt_name
+         * @param  $opt_value
+         * @return mixed
+         */
+        public function setOption ($level, $opt_name, $opt_value) {}
+
+        /**
+         * @param  $how
+         * @return mixed
+         */
+        public function shutdown ($how = NULL) {}
+
+        /**
+         * @param  $event
+         * @return mixed
+         */
+        public function cancel ($event = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+        /**
+         * @return mixed
+         */
+        public function getpeername () {}
+
+        /**
+         * @return mixed
+         */
+        public function getsockname () {}
+
+    }
+}
+
+namespace Swoole\Coroutine\Socket {
+    class Exception extends \Swoole\Exception {
+
+        protected $message;
+        protected $code;
+        protected $file;
+        protected $line;
+
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
     }
 }
 
@@ -445,66 +2481,112 @@ namespace Swoole {
         public $type;
         public $id;
         public $setting;
-        public $onConnect;
-        public $onError;
-        public $onReceive;
-        public $onClose;
-        public $onBufferFull;
-        public $onBufferEmpty;
 
-        public function __construct ($type, $async = NULL) {}
+        /**
+         * @param  $type
+         * @param  $async
+         * @param  $id
+         * @return mixed
+         */
+        public function __construct ($type, $async = NULL, $id = NULL) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function set (array $settings) :NULL {}
-        public function connect ($host, $port = NULL, $timeout = NULL, $sock_flag = NULL) :NULL {}
-        public function recv ($size = NULL, $flag = NULL) :NULL {}
-        public function send ($data, $flag = NULL) :NULL {}
-        public function pipe ($dst_socket) :NULL {}
-        public function sendfile ($filename, $offset = NULL, $length = NULL) :NULL {}
-        public function sendto ($ip, $port, $data) :NULL {}
-        public function sleep () :NULL {}
-        public function wakeup () :NULL {}
-        public function pause () :NULL {}
-        public function resume () :NULL {}
-        public function shutdown ($how) :NULL {}
-        public function isConnected () :NULL {}
-        public function getsockname () :NULL {}
-        public function getpeername () :NULL {}
-        public function close ($force = NULL) :NULL {}
-        public function on ($event_name, $callback) :NULL {}
-    }
-}
 
-namespace Swoole\Coroutine {
-    final class Socket {
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
 
-        public $errCode;
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $timeout
+         * @param  $sock_flag
+         * @return mixed
+         */
+        public function connect ($host, $port = NULL, $timeout = NULL, $sock_flag = NULL) {}
 
-        public function __construct ($domain, $type, $protocol) {}
-        public function bind ($address, $port = NULL) :NULL {}
-        public function listen ($backlog = NULL) :NULL {}
-        public function accept ($timeout = NULL) :NULL {}
-        public function connect ($host, $port = NULL, $timeout = NULL) :NULL {}
-        public function recv ($timeout = NULL) :NULL {}
-        public function send ($data, $timeout = NULL) :NULL {}
-        public function recvfrom (&$peername, $timeout = NULL) :NULL {}
-        public function sendto ($addr, $port, $data) :NULL {}
-        public function getpeername () :NULL {}
-        public function getsockname () :NULL {}
-        public function close () :NULL {}
-    }
-}
+        /**
+         * @param  $size
+         * @param  $flag
+         * @return mixed
+         */
+        public function recv ($size = NULL, $flag = NULL) {}
 
-namespace Swoole\Coroutine\Socket {
-    class Exception extends \Exception {
+        /**
+         * @param  $data
+         * @param  $flag
+         * @return mixed
+         */
+        public function send ($data, $flag = NULL) {}
 
-        protected $message;
-        protected $code;
-        protected $file;
-        protected $line;
+        /**
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($filename, $offset = NULL, $length = NULL) {}
 
-        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
-        public function __wakeup () :NULL {}
-        public function __toString () :NULL {}
+        /**
+         * @param  $ip
+         * @param  $port
+         * @param  $data
+         * @return mixed
+         */
+        public function sendto ($ip, $port, $data) {}
+
+        /**
+         * @param  $how
+         * @return mixed
+         */
+        public function shutdown ($how) {}
+
+        /**
+         * @return mixed
+         */
+        public function enableSSL () {}
+
+        /**
+         * @return mixed
+         */
+        public function getPeerCert () {}
+
+        /**
+         * @return mixed
+         */
+        public function verifyPeerCert () {}
+
+        /**
+         * @return mixed
+         */
+        public function isConnected () {}
+
+        /**
+         * @return mixed
+         */
+        public function getsockname () {}
+
+        /**
+         * @return mixed
+         */
+        public function getpeername () {}
+
+        /**
+         * @param  $force
+         * @return mixed
+         */
+        public function close ($force = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getSocket () {}
+
     }
 }
 
@@ -516,83 +2598,121 @@ namespace Swoole\Coroutine {
         const MSG_WAITALL = 256;
 
         public $errCode;
-        public $sock;
+        public $errMsg;
+        public $fd;
+        private $socket;
         public $type;
         public $setting;
         public $connected;
 
+        /**
+         * @param  $type
+         * @return mixed
+         */
         public function __construct ($type) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function set (array $settings) :NULL {}
-        public function connect ($host, $port = NULL, $timeout = NULL) :NULL {}
-        public function recv ($timeout = NULL) :NULL {}
-        public function peek ($length = NULL) :NULL {}
-        public function send ($data) :NULL {}
-        public function sendfile ($filename, $offset = NULL, $length = NULL) :NULL {}
-        public function sendto ($address, $port, $data) :NULL {}
-        public function recvfrom ($length, &$address, &$port = NULL) :NULL {}
-        public function isConnected () :NULL {}
-        public function getsockname () :NULL {}
-        public function getpeername () :NULL {}
-        public function close () :NULL {}
-    }
-}
 
-namespace Swoole\Coroutine {
-    class MySQL {
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
 
-        private $serverInfo;
-        public $sock;
-        public $connected;
-        public $connect_error;
-        public $connect_errno;
-        public $affected_rows;
-        public $insert_id;
-        public $error;
-        public $errno;
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $timeout
+         * @param  $sock_flag
+         * @return mixed
+         */
+        public function connect ($host, $port = NULL, $timeout = NULL, $sock_flag = NULL) {}
 
-        public function __construct () {}
-        public function __destruct () {}
-        public function connect (array $server_config) :NULL {}
-        public function query ($sql, $timeout = NULL) :NULL {}
-        public function recv () :NULL {}
-        public function begin ($timeout = NULL) :NULL {}
-        public function commit ($timeout = NULL) :NULL {}
-        public function rollback ($timeout = NULL) :NULL {}
-        public function prepare ($query, $timeout = NULL) :NULL {}
-        public function setDefer ($defer = NULL) :NULL {}
-        public function getDefer () :NULL {}
-        public function close () :NULL {}
-    }
-}
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recv ($timeout = NULL) {}
 
-namespace Swoole\Coroutine\MySQL {
-    class Statement {
+        /**
+         * @param  $length
+         * @return mixed
+         */
+        public function peek ($length = NULL) {}
 
-        public $affected_rows;
-        public $insert_id;
-        public $error;
-        public $errno;
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function send ($data) {}
 
-        public function execute ($params = NULL, $timeout = NULL) :NULL {}
-        public function fetch () :NULL {}
-        public function fetchAll () :NULL {}
-        public function nextResult () :NULL {}
-        public function __destruct () {}
-    }
-}
+        /**
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($filename, $offset = NULL, $length = NULL) {}
 
-namespace Swoole\Coroutine\MySQL {
-    class Exception extends \Exception {
+        /**
+         * @param  $address
+         * @param  $port
+         * @param  $data
+         * @return mixed
+         */
+        public function sendto ($address, $port, $data) {}
 
-        protected $message;
-        protected $code;
-        protected $file;
-        protected $line;
+        /**
+         * @param  $length
+         * @param  $address
+         * @param  $port
+         * @return mixed
+         */
+        public function recvfrom ($length, &$address, &$port = NULL) {}
 
-        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
-        public function __wakeup () :NULL {}
-        public function __toString () :NULL {}
+        /**
+         * @return mixed
+         */
+        public function enableSSL () {}
+
+        /**
+         * @return mixed
+         */
+        public function getPeerCert () {}
+
+        /**
+         * @return mixed
+         */
+        public function verifyPeerCert () {}
+
+        /**
+         * @return mixed
+         */
+        public function isConnected () {}
+
+        /**
+         * @return mixed
+         */
+        public function getsockname () {}
+
+        /**
+         * @return mixed
+         */
+        public function getpeername () {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+        /**
+         * @return mixed
+         */
+        public function exportSocket () {}
+
     }
 }
 
@@ -600,314 +2720,1706 @@ namespace Swoole\Coroutine\Http {
     class Client {
 
         public $errCode;
-        public $sock;
-        public $type;
-        public $setting;
+        public $errMsg;
         public $connected;
-        public $statusCode;
         public $host;
         public $port;
+        public $ssl;
+        public $setting;
         public $requestMethod;
         public $requestHeaders;
         public $requestBody;
         public $uploadFiles;
         public $downloadFile;
+        public $downloadOffset;
+        public $statusCode;
         public $headers;
         public $set_cookie_headers;
         public $cookies;
         public $body;
 
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $ssl
+         * @return mixed
+         */
         public function __construct ($host, $port = NULL, $ssl = NULL) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function set (array $settings) :NULL {}
-        public function setMethod ($method) :NULL {}
-        public function setHeaders (array $headers) :NULL {}
-        public function setCookies (array $cookies) :NULL {}
-        public function setData ($data) :NULL {}
-        public function execute ($path) :NULL {}
-        public function get ($path) :NULL {}
-        public function post ($path, $data) :NULL {}
-        public function download ($path, $file, $offset = NULL) :NULL {}
-        public function upgrade ($path) :NULL {}
-        public function addFile ($path, $name, $type = NULL, $filename = NULL, $offset = NULL, $length = NULL) :NULL {}
-        public function addData ($path, $name, $type = NULL, $filename = NULL) :NULL {}
-        public function isConnected () :NULL {}
-        public function close () :NULL {}
-        public function setDefer ($defer = NULL) :NULL {}
-        public function getDefer () :NULL {}
-        public function recv ($timeout = NULL) :NULL {}
-        public function push ($data, $opcode = NULL, $finish = NULL) :NULL {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @return mixed
+         */
+        public function getDefer () {}
+
+        /**
+         * @param  $defer
+         * @return mixed
+         */
+        public function setDefer ($defer = NULL) {}
+
+        /**
+         * @param  $method
+         * @return mixed
+         */
+        public function setMethod ($method) {}
+
+        /**
+         * @param array $headers
+         * @return mixed
+         */
+        public function setHeaders ($headers) {}
+
+        /**
+         * @param  $username
+         * @param  $password
+         * @return mixed
+         */
+        public function setBasicAuth ($username, $password) {}
+
+        /**
+         * @param array $cookies
+         * @return mixed
+         */
+        public function setCookies ($cookies) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function setData ($data) {}
+
+        /**
+         * @param  $path
+         * @param  $name
+         * @param  $type
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function addFile ($path, $name, $type = NULL, $filename = NULL, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $path
+         * @param  $name
+         * @param  $type
+         * @param  $filename
+         * @return mixed
+         */
+        public function addData ($path, $name, $type = NULL, $filename = NULL) {}
+
+        /**
+         * @param  $path
+         * @return mixed
+         */
+        public function execute ($path) {}
+
+        /**
+         * @param  $path
+         * @return mixed
+         */
+        public function get ($path) {}
+
+        /**
+         * @param  $path
+         * @param  $data
+         * @return mixed
+         */
+        public function post ($path, $data) {}
+
+        /**
+         * @param  $path
+         * @param  $file
+         * @param  $offset
+         * @return mixed
+         */
+        public function download ($path, $file, $offset = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getBody () {}
+
+        /**
+         * @return mixed
+         */
+        public function getHeaders () {}
+
+        /**
+         * @return mixed
+         */
+        public function getCookies () {}
+
+        /**
+         * @return mixed
+         */
+        public function getStatusCode () {}
+
+        /**
+         * @return mixed
+         */
+        public function getHeaderOut () {}
+
+        /**
+         * @param  $path
+         * @return mixed
+         */
+        public function upgrade ($path) {}
+
+        /**
+         * @param  $data
+         * @param  $opcode
+         * @param  $flags
+         * @return mixed
+         */
+        public function push ($data, $opcode = NULL, $flags = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recv ($timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
     }
 }
 
-namespace Swoole {
-    class Coroutine {
-
-        public static function create ($func) :NULL {}
-        public static function exec ($command) :NULL {}
-        public static function set ($options) :NULL {}
-        public static function yield () :NULL {}
-        public static function suspend () :NULL {}
-        public static function resume ($uid) :NULL {}
-        public static function stats () :NULL {}
-        public static function getuid () :NULL {}
-        public static function sleep ($seconds) :NULL {}
-        public static function fread ($handle, $length = NULL) :NULL {}
-        public static function fgets ($handle) :NULL {}
-        public static function fwrite ($handle, $string, $length = NULL) :NULL {}
-        public static function readFile ($filename) :NULL {}
-        public static function writeFile ($filename, $data, $flags = NULL) :NULL {}
-        public static function gethostbyname ($domain_name, $family = NULL) :NULL {}
-        public static function getaddrinfo ($hostname, $family = NULL, $socktype = NULL, $protocol = NULL, $service = NULL) :NULL {}
-        public static function getBackTrace ($cid, $options = NULL, $limit = NULL) :NULL {}
-        public static function listCoroutines () :NULL {}
-    }
-}
-
-namespace Swoole\Coroutine {
-    class Iterator {
-
-        public function rewind () :NULL {}
-        public function next () :NULL {}
-        public function current () :NULL {}
-        public function key () :NULL {}
-        public function valid () :NULL {}
-        public function count () :NULL {}
-        public function __destruct () {}
-    }
-}
-
-namespace Swoole {
-    class ExitException extends \Exception {
+namespace Swoole\Coroutine\Http\Client {
+    class Exception extends \Swoole\Exception {
 
         protected $message;
         protected $code;
         protected $file;
         protected $line;
 
-        public function getFlags () :NULL {}
-        public function getStatus () :NULL {}
-        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
-        public function __wakeup () :NULL {}
-        public function __toString () :NULL {}
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
     }
 }
 
-namespace Swoole\Http {
-    class Client {
+namespace Swoole\Coroutine {
+    class MySQL {
 
-        public $type;
-        public $errCode;
+        public $serverInfo;
         public $sock;
-        public $statusCode;
+        public $connected;
+        public $connect_errno;
+        public $connect_error;
+        public $affected_rows;
+        public $insert_id;
+        public $error;
+        public $errno;
+
+        /**
+         * @return mixed
+         */
+        public function __construct () {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @return mixed
+         */
+        public function getDefer () {}
+
+        /**
+         * @param  $defer
+         * @return mixed
+         */
+        public function setDefer ($defer = NULL) {}
+
+        /**
+         * @param array $server_config
+         * @return mixed
+         */
+        public function connect ($server_config = NULL) {}
+
+        /**
+         * @param  $sql
+         * @param  $timeout
+         * @return mixed
+         */
+        public function query ($sql, $timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function fetch () {}
+
+        /**
+         * @return mixed
+         */
+        public function fetchAll () {}
+
+        /**
+         * @return mixed
+         */
+        public function nextResult () {}
+
+        /**
+         * @param  $query
+         * @param  $timeout
+         * @return mixed
+         */
+        public function prepare ($query, $timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function recv () {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function begin ($timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function commit ($timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function rollback ($timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+    }
+}
+
+namespace Swoole\Coroutine\MySQL {
+    class Statement {
+
+        public $id;
+        public $affected_rows;
+        public $insert_id;
+        public $error;
+        public $errno;
+
+        /**
+         * @param  $params
+         * @param  $timeout
+         * @return mixed
+         */
+        public function execute ($params = NULL, $timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function fetch ($timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function fetchAll ($timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function nextResult ($timeout = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recv ($timeout = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+    }
+}
+
+namespace Swoole\Coroutine\MySQL {
+    class Exception extends \Swoole\Exception {
+
+        protected $message;
+        protected $code;
+        protected $file;
+        protected $line;
+
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
+    }
+}
+
+namespace Swoole\Coroutine {
+    class Redis {
+
         public $host;
         public $port;
-        public $requestMethod;
-        public $requestHeaders;
-        public $requestBody;
-        public $uploadFiles;
-        public $set_cookie_headers;
-        public $downloadFile;
-        public $headers;
-        public $cookies;
-        public $body;
-        public $onConnect;
-        public $onError;
-        public $onMessage;
-        public $onClose;
+        public $setting;
+        public $sock;
+        public $connected;
+        public $errType;
+        public $errCode;
+        public $errMsg;
 
-        public function __construct ($host, $port = NULL, $ssl = NULL) {}
+        /**
+         * @param  $config
+         * @return mixed
+         */
+        public function __construct ($config = NULL) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function set (array $settings) :NULL {}
-        public function setMethod ($method) :NULL {}
-        public function setHeaders (array $headers) :NULL {}
-        public function setCookies (array $cookies) :NULL {}
-        public function setData ($data) :NULL {}
-        public function addFile ($path, $name, $type = NULL, $filename = NULL, $offset = NULL, $length = NULL) :NULL {}
-        public function execute ($path, $callback) :NULL {}
-        public function push ($data, $opcode = NULL, $finish = NULL) :NULL {}
-        public function get ($path, $callback) :NULL {}
-        public function post ($path, $data, $callback) :NULL {}
-        public function upgrade ($path, $callback) :NULL {}
-        public function download ($path, $file, $callback, $offset = NULL) :NULL {}
-        public function isConnected () :NULL {}
-        public function close () :NULL {}
-        public function on ($event_name, $callback) :NULL {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $serialize
+         * @return mixed
+         */
+        public function connect ($host, $port = NULL, $serialize = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getAuth () {}
+
+        /**
+         * @return mixed
+         */
+        public function getDBNum () {}
+
+        /**
+         * @return mixed
+         */
+        public function getOptions () {}
+
+        /**
+         * @param  $options
+         * @return mixed
+         */
+        public function setOptions ($options) {}
+
+        /**
+         * @return mixed
+         */
+        public function getDefer () {}
+
+        /**
+         * @param  $defer
+         * @return mixed
+         */
+        public function setDefer ($defer) {}
+
+        /**
+         * @return mixed
+         */
+        public function recv () {}
+
+        /**
+         * @param array $params
+         * @return mixed
+         */
+        public function request ($params) {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @param  $timeout
+         * @param  $opt
+         * @return mixed
+         */
+        public function set ($key, $value, $timeout = NULL, $opt = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $offset
+         * @param  $value
+         * @return mixed
+         */
+        public function setBit ($key, $offset, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $expire
+         * @param  $value
+         * @return mixed
+         */
+        public function setEx ($key, $expire, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $expire
+         * @param  $value
+         * @return mixed
+         */
+        public function psetEx ($key, $expire, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $index
+         * @param  $value
+         * @return mixed
+         */
+        public function lSet ($key, $index, $value) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function get ($key) {}
+
+        /**
+         * @param  $keys
+         * @return mixed
+         */
+        public function mGet ($keys) {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function del ($key, $other_keys = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $other_members
+         * @return mixed
+         */
+        public function hDel ($key, $member, $other_members = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $value
+         * @return mixed
+         */
+        public function hSet ($key, $member, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $pairs
+         * @return mixed
+         */
+        public function hMSet ($key, $pairs) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $value
+         * @return mixed
+         */
+        public function hSetNx ($key, $member, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function delete ($key, $other_keys = NULL) {}
+
+        /**
+         * @param  $pairs
+         * @return mixed
+         */
+        public function mSet ($pairs) {}
+
+        /**
+         * @param  $pairs
+         * @return mixed
+         */
+        public function mSetNx ($pairs) {}
+
+        /**
+         * @param  $pattern
+         * @return mixed
+         */
+        public function getKeys ($pattern) {}
+
+        /**
+         * @param  $pattern
+         * @return mixed
+         */
+        public function keys ($pattern) {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function exists ($key, $other_keys = NULL) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function type ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function strLen ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function lPop ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $timeout_or_key
+         * @param  $extra_args
+         * @return mixed
+         */
+        public function blPop ($key, $timeout_or_key, $extra_args = NULL) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function rPop ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $timeout_or_key
+         * @param  $extra_args
+         * @return mixed
+         */
+        public function brPop ($key, $timeout_or_key, $extra_args = NULL) {}
+
+        /**
+         * @param  $src
+         * @param  $dst
+         * @param  $timeout
+         * @return mixed
+         */
+        public function bRPopLPush ($src, $dst, $timeout) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function lSize ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function lLen ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function sSize ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function scard ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function sPop ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function sMembers ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function sGetMembers ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $count
+         * @return mixed
+         */
+        public function sRandMember ($key, $count = NULL) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function persist ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function ttl ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function pttl ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function zCard ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function zSize ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function hLen ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function hKeys ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function hVals ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function hGetAll ($key) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function debug ($key) {}
+
+        /**
+         * @param  $ttl
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function restore ($ttl, $key, $value) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function dump ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $newkey
+         * @return mixed
+         */
+        public function renameKey ($key, $newkey) {}
+
+        /**
+         * @param  $key
+         * @param  $newkey
+         * @return mixed
+         */
+        public function rename ($key, $newkey) {}
+
+        /**
+         * @param  $key
+         * @param  $newkey
+         * @return mixed
+         */
+        public function renameNx ($key, $newkey) {}
+
+        /**
+         * @param  $src
+         * @param  $dst
+         * @return mixed
+         */
+        public function rpoplpush ($src, $dst) {}
+
+        /**
+         * @return mixed
+         */
+        public function randomKey () {}
+
+        /**
+         * @param  $key
+         * @param  $elements
+         * @return mixed
+         */
+        public function pfadd ($key, $elements) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function pfcount ($key) {}
+
+        /**
+         * @param  $dstkey
+         * @param  $keys
+         * @return mixed
+         */
+        public function pfmerge ($dstkey, $keys) {}
+
+        /**
+         * @return mixed
+         */
+        public function ping () {}
+
+        /**
+         * @param  $password
+         * @return mixed
+         */
+        public function auth ($password) {}
+
+        /**
+         * @return mixed
+         */
+        public function unwatch () {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function watch ($key, $other_keys = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function save () {}
+
+        /**
+         * @return mixed
+         */
+        public function bgSave () {}
+
+        /**
+         * @return mixed
+         */
+        public function lastSave () {}
+
+        /**
+         * @return mixed
+         */
+        public function flushDB () {}
+
+        /**
+         * @return mixed
+         */
+        public function flushAll () {}
+
+        /**
+         * @return mixed
+         */
+        public function dbSize () {}
+
+        /**
+         * @return mixed
+         */
+        public function bgrewriteaof () {}
+
+        /**
+         * @return mixed
+         */
+        public function time () {}
+
+        /**
+         * @return mixed
+         */
+        public function role () {}
+
+        /**
+         * @param  $key
+         * @param  $offset
+         * @param  $value
+         * @return mixed
+         */
+        public function setRange ($key, $offset, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function setNx ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function getSet ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function append ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function lPushx ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function lPush ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function rPush ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function rPushx ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function sContains ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function sismember ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @return mixed
+         */
+        public function zScore ($key, $member) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @return mixed
+         */
+        public function zRank ($key, $member) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @return mixed
+         */
+        public function zRevRank ($key, $member) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @return mixed
+         */
+        public function hGet ($key, $member) {}
+
+        /**
+         * @param  $key
+         * @param  $keys
+         * @return mixed
+         */
+        public function hMGet ($key, $keys) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @return mixed
+         */
+        public function hExists ($key, $member) {}
+
+        /**
+         * @param  $channel
+         * @param  $message
+         * @return mixed
+         */
+        public function publish ($channel, $message) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @param  $member
+         * @return mixed
+         */
+        public function zIncrBy ($key, $value, $member) {}
+
+        /**
+         * @param  $key
+         * @param  $score
+         * @param  $value
+         * @return mixed
+         */
+        public function zAdd ($key, $score, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $count
+         * @return mixed
+         */
+        public function zPopMin ($key, $count) {}
+
+        /**
+         * @param  $key
+         * @param  $count
+         * @return mixed
+         */
+        public function zPopMax ($key, $count) {}
+
+        /**
+         * @param  $key
+         * @param  $timeout_or_key
+         * @param  $extra_args
+         * @return mixed
+         */
+        public function bzPopMin ($key, $timeout_or_key, $extra_args = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $timeout_or_key
+         * @param  $extra_args
+         * @return mixed
+         */
+        public function bzPopMax ($key, $timeout_or_key, $extra_args = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $min
+         * @param  $max
+         * @return mixed
+         */
+        public function zDeleteRangeByScore ($key, $min, $max) {}
+
+        /**
+         * @param  $key
+         * @param  $min
+         * @param  $max
+         * @return mixed
+         */
+        public function zRemRangeByScore ($key, $min, $max) {}
+
+        /**
+         * @param  $key
+         * @param  $min
+         * @param  $max
+         * @return mixed
+         */
+        public function zCount ($key, $min, $max) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @param  $scores
+         * @return mixed
+         */
+        public function zRange ($key, $start, $end, $scores = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @param  $scores
+         * @return mixed
+         */
+        public function zRevRange ($key, $start, $end, $scores = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @param  $options
+         * @return mixed
+         */
+        public function zRangeByScore ($key, $start, $end, $options = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @param  $options
+         * @return mixed
+         */
+        public function zRevRangeByScore ($key, $start, $end, $options = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $min
+         * @param  $max
+         * @param  $offset
+         * @param  $limit
+         * @return mixed
+         */
+        public function zRangeByLex ($key, $min, $max, $offset = NULL, $limit = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $min
+         * @param  $max
+         * @param  $offset
+         * @param  $limit
+         * @return mixed
+         */
+        public function zRevRangeByLex ($key, $min, $max, $offset = NULL, $limit = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $keys
+         * @param  $weights
+         * @param  $aggregate
+         * @return mixed
+         */
+        public function zInter ($key, $keys, $weights = NULL, $aggregate = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $keys
+         * @param  $weights
+         * @param  $aggregate
+         * @return mixed
+         */
+        public function zinterstore ($key, $keys, $weights = NULL, $aggregate = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $keys
+         * @param  $weights
+         * @param  $aggregate
+         * @return mixed
+         */
+        public function zUnion ($key, $keys, $weights = NULL, $aggregate = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $keys
+         * @param  $weights
+         * @param  $aggregate
+         * @return mixed
+         */
+        public function zunionstore ($key, $keys, $weights = NULL, $aggregate = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function incrBy ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $value
+         * @return mixed
+         */
+        public function hIncrBy ($key, $member, $value) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function incr ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function decrBy ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function decr ($key) {}
+
+        /**
+         * @param  $key
+         * @param  $offset
+         * @return mixed
+         */
+        public function getBit ($key, $offset) {}
+
+        /**
+         * @param  $key
+         * @param  $position
+         * @param  $pivot
+         * @param  $value
+         * @return mixed
+         */
+        public function lInsert ($key, $position, $pivot, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $index
+         * @return mixed
+         */
+        public function lGet ($key, $index) {}
+
+        /**
+         * @param  $key
+         * @param  $integer
+         * @return mixed
+         */
+        public function lIndex ($key, $integer) {}
+
+        /**
+         * @param  $key
+         * @param  $timeout
+         * @return mixed
+         */
+        public function setTimeout ($key, $timeout) {}
+
+        /**
+         * @param  $key
+         * @param  $integer
+         * @return mixed
+         */
+        public function expire ($key, $integer) {}
+
+        /**
+         * @param  $key
+         * @param  $timestamp
+         * @return mixed
+         */
+        public function pexpire ($key, $timestamp) {}
+
+        /**
+         * @param  $key
+         * @param  $timestamp
+         * @return mixed
+         */
+        public function expireAt ($key, $timestamp) {}
+
+        /**
+         * @param  $key
+         * @param  $timestamp
+         * @return mixed
+         */
+        public function pexpireAt ($key, $timestamp) {}
+
+        /**
+         * @param  $key
+         * @param  $dbindex
+         * @return mixed
+         */
+        public function move ($key, $dbindex) {}
+
+        /**
+         * @param  $dbindex
+         * @return mixed
+         */
+        public function select ($dbindex) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @return mixed
+         */
+        public function getRange ($key, $start, $end) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $stop
+         * @return mixed
+         */
+        public function listTrim ($key, $start, $stop) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $stop
+         * @return mixed
+         */
+        public function ltrim ($key, $start, $stop) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @return mixed
+         */
+        public function lGetRange ($key, $start, $end) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @return mixed
+         */
+        public function lRange ($key, $start, $end) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @param  $count
+         * @return mixed
+         */
+        public function lRem ($key, $value, $count) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @param  $count
+         * @return mixed
+         */
+        public function lRemove ($key, $value, $count) {}
+
+        /**
+         * @param  $key
+         * @param  $start
+         * @param  $end
+         * @return mixed
+         */
+        public function zDeleteRangeByRank ($key, $start, $end) {}
+
+        /**
+         * @param  $key
+         * @param  $min
+         * @param  $max
+         * @return mixed
+         */
+        public function zRemRangeByRank ($key, $min, $max) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function incrByFloat ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $value
+         * @return mixed
+         */
+        public function hIncrByFloat ($key, $member, $value) {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function bitCount ($key) {}
+
+        /**
+         * @param  $operation
+         * @param  $ret_key
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function bitOp ($operation, $ret_key, $key, $other_keys = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function sAdd ($key, $value) {}
+
+        /**
+         * @param  $src
+         * @param  $dst
+         * @param  $value
+         * @return mixed
+         */
+        public function sMove ($src, $dst, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function sDiff ($key, $other_keys = NULL) {}
+
+        /**
+         * @param  $dst
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function sDiffStore ($dst, $key, $other_keys = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function sUnion ($key, $other_keys = NULL) {}
+
+        /**
+         * @param  $dst
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function sUnionStore ($dst, $key, $other_keys = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function sInter ($key, $other_keys = NULL) {}
+
+        /**
+         * @param  $dst
+         * @param  $key
+         * @param  $other_keys
+         * @return mixed
+         */
+        public function sInterStore ($dst, $key, $other_keys = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function sRemove ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function srem ($key, $value) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $other_members
+         * @return mixed
+         */
+        public function zDelete ($key, $member, $other_members = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $other_members
+         * @return mixed
+         */
+        public function zRemove ($key, $member, $other_members = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $member
+         * @param  $other_members
+         * @return mixed
+         */
+        public function zRem ($key, $member, $other_members = NULL) {}
+
+        /**
+         * @param  $patterns
+         * @return mixed
+         */
+        public function pSubscribe ($patterns) {}
+
+        /**
+         * @param  $channels
+         * @return mixed
+         */
+        public function subscribe ($channels) {}
+
+        /**
+         * @param  $channels
+         * @return mixed
+         */
+        public function unsubscribe ($channels) {}
+
+        /**
+         * @param  $patterns
+         * @return mixed
+         */
+        public function pUnSubscribe ($patterns) {}
+
+        /**
+         * @return mixed
+         */
+        public function multi () {}
+
+        /**
+         * @return mixed
+         */
+        public function exec () {}
+
+        /**
+         * @param  $script
+         * @param  $args
+         * @param  $num_keys
+         * @return mixed
+         */
+        public function eval ($script, $args = NULL, $num_keys = NULL) {}
+
+        /**
+         * @param  $script_sha
+         * @param  $args
+         * @param  $num_keys
+         * @return mixed
+         */
+        public function evalSha ($script_sha, $args = NULL, $num_keys = NULL) {}
+
+        /**
+         * @param  $cmd
+         * @param  $args
+         * @return mixed
+         */
+        public function script ($cmd, $args = NULL) {}
+
     }
 }
 
-namespace Swoole {
-    class Process {
-        const IPC_NOWAIT = 256;
-        const PIPE_MASTER = 1;
-        const PIPE_WORKER = 2;
-        const PIPE_READ = 3;
-        const PIPE_WRITE = 4;
-
-        public $pipe;
-        public $callback;
-        public $msgQueueId;
-        public $msgQueueKey;
-        public $pid;
-        public $id;
-
-        public function __construct ($callback, $redirect_stdin_and_stdout = NULL, $pipe_type = NULL) {}
-        public function __destruct () {}
-        public static function wait ($blocking = NULL) :NULL {}
-        public static function signal ($signal_no, $callback) :NULL {}
-        public static function alarm ($usec) :NULL {}
-        public static function kill ($pid, $signal_no = NULL) :NULL {}
-        public static function daemon ($nochdir = NULL, $noclose = NULL) :NULL {}
-        public function setTimeout ($seconds) :NULL {}
-        public function setBlocking ($blocking) :NULL {}
-        public function useQueue ($key = NULL, $mode = NULL) :NULL {}
-        public function statQueue () :NULL {}
-        public function freeQueue () :NULL {}
-        public function start () :NULL {}
-        public function write ($data) :NULL {}
-        public function close () :NULL {}
-        public function read ($size = NULL) :NULL {}
-        public function push ($data) :NULL {}
-        public function pop ($size = NULL) :NULL {}
-        public function exit ($exit_code = NULL) :NULL {}
-        public function exec ($exec_file, $args) :NULL {}
-        public function name ($process_name) :NULL {}
-    }
-}
-
-namespace Swoole\Process {
-    class Pool {
-
-        public function __construct ($worker_num, $ipc_type = NULL, $msgqueue_key = NULL) {}
-        public function __destruct () {}
-        public function on ($event_name, $callback) :NULL {}
-        public function getProcess () :NULL {}
-        public function listen ($host, $port = NULL, $backlog = NULL) :NULL {}
-        public function write ($data) :NULL {}
-        public function start () :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Table {
-        const TYPE_INT = 1;
-        const TYPE_STRING = 7;
-        const TYPE_FLOAT = 6;
-
-        public function __construct ($table_size, $conflict_proportion = NULL) {}
-        public function column ($name, $type, $size = NULL) :NULL {}
-        public function create () :NULL {}
-        public function destroy () :NULL {}
-        public function set ($key, array $value) :NULL {}
-        public function get ($key, $field = NULL) :NULL {}
-        public function count () :NULL {}
-        public function del ($key) :NULL {}
-        public function exist ($key) :NULL {}
-        public function incr ($key, $column, $incrby = NULL) :NULL {}
-        public function decr ($key, $column, $decrby = NULL) :NULL {}
-        public function getMemorySize () :NULL {}
-        public function offsetExists ($offset) :NULL {}
-        public function offsetGet ($offset) :NULL {}
-        public function offsetSet ($offset, $value) :NULL {}
-        public function offsetUnset ($offset) :NULL {}
-        public function rewind () :NULL {}
-        public function next () :NULL {}
-        public function current () :NULL {}
-        public function key () :NULL {}
-        public function valid () :NULL {}
-    }
-}
-
-namespace Swoole\Table {
-    class Row {
-
-        public $key;
-        public $value;
-
-        public function offsetExists ($offset) :NULL {}
-        public function offsetGet ($offset) :NULL {}
-        public function offsetSet ($offset, $value) :NULL {}
-        public function offsetUnset ($offset) :NULL {}
-        public function __destruct () {}
-    }
-}
-
-namespace Swoole {
-    class Runtime {
-
-        public static function enableStrictMode () :NULL {}
-        public static function enableCoroutine ($enable = NULL, $flags = NULL) :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Lock {
-        const FILELOCK = 2;
-        const MUTEX = 3;
-        const SEM = 4;
-        const RWLOCK = 1;
-        const SPINLOCK = 5;
+namespace Swoole\Coroutine\Http2 {
+    class Client {
 
         public $errCode;
+        public $errMsg;
+        public $sock;
+        public $type;
+        public $setting;
+        public $connected;
+        public $host;
+        public $port;
+        public $ssl;
 
-        public function __construct ($type = NULL, $filename = NULL) {}
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $ssl
+         * @return mixed
+         */
+        public function __construct ($host, $port = NULL, $ssl = NULL) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function lock () :NULL {}
-        public function lockwait ($timeout = NULL) :NULL {}
-        public function trylock () :NULL {}
-        public function lock_read () :NULL {}
-        public function trylock_read () :NULL {}
-        public function unlock () :NULL {}
-        public function destroy () :NULL {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @return mixed
+         */
+        public function connect () {}
+
+        /**
+         * @param  $key
+         * @return mixed
+         */
+        public function stats ($key = NULL) {}
+
+        /**
+         * @param  $stream_id
+         * @return mixed
+         */
+        public function isStreamExist ($stream_id) {}
+
+        /**
+         * @param  $request
+         * @return mixed
+         */
+        public function send ($request) {}
+
+        /**
+         * @param  $stream_id
+         * @param  $data
+         * @param  $end_stream
+         * @return mixed
+         */
+        public function write ($stream_id, $data, $end_stream = NULL) {}
+
+        /**
+         * @param  $timeout
+         * @return mixed
+         */
+        public function recv ($timeout = NULL) {}
+
+        /**
+         * @param  $error_code
+         * @param  $debug_data
+         * @return mixed
+         */
+        public function goaway ($error_code = NULL, $debug_data = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function ping () {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+    }
+}
+
+namespace Swoole\Coroutine\Http2\Client {
+    class Exception extends \Swoole\Exception {
+
+        protected $message;
+        protected $code;
+        protected $file;
+        protected $line;
+
+        /**
+         * @param  $message
+         * @param  $code
+         * @param  $previous
+         * @return mixed
+         */
+        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __wakeup () {}
+
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
+    }
+}
+
+namespace Swoole\Http2 {
+    class Request {
+
+        public $path;
+        public $method;
+        public $headers;
+        public $cookies;
+        public $data;
+        public $pipeline;
+
+    }
+}
+
+namespace Swoole\Http2 {
+    class Response {
+
+        public $streamId;
+        public $errCode;
+        public $statusCode;
+        public $pipeline;
+        public $headers;
+        public $set_cookie_headers;
+        public $cookies;
+        public $data;
+
     }
 }
 
 namespace Swoole {
-    class Atomic {
+    class Server {
 
-        public function __construct ($value = NULL) {}
-        public function add ($add_value = NULL) :NULL {}
-        public function sub ($sub_value = NULL) :NULL {}
-        public function get () :NULL {}
-        public function set ($value) :NULL {}
-        public function wait ($timeout = NULL) :NULL {}
-        public function wakeup ($count = NULL) :NULL {}
-        public function cmpset ($cmp_value, $new_value) :NULL {}
-    }
-}
-
-namespace Swoole\Atomic {
-    class Long {
-
-        public function __construct ($value = NULL) {}
-        public function add ($add_value = NULL) :NULL {}
-        public function sub ($sub_value = NULL) :NULL {}
-        public function get () :NULL {}
-        public function set ($value) :NULL {}
-        public function cmpset ($cmp_value, $new_value) :NULL {}
-    }
-}
-
-namespace Swoole\Http {
-    class Server extends \Swoole\Server {
-
-        public $onConnect;
-        public $onReceive;
-        public $onClose;
-        public $onPacket;
-        public $onBufferFull;
-        public $onBufferEmpty;
-        public $onStart;
-        public $onShutdown;
-        public $onWorkerStart;
-        public $onWorkerStop;
-        public $onWorkerExit;
-        public $onWorkerError;
-        public $onTask;
-        public $onFinish;
-        public $onManagerStart;
-        public $onManagerStop;
-        public $onPipeMessage;
+        private $onStart;
+        private $onShutdown;
+        private $onWorkerStart;
+        private $onWorkerStop;
+        private $onWorkerExit;
+        private $onWorkerError;
+        private $onTask;
+        private $onFinish;
+        private $onManagerStart;
+        private $onManagerStop;
+        private $onPipeMessage;
+        public $setting;
         public $connections;
         public $host;
         public $port;
@@ -919,73 +4431,437 @@ namespace Swoole\Http {
         public $worker_id;
         public $taskworker;
         public $worker_pid;
-        public $onRequest;
-        public $onHandshake;
-        public $setting;
 
-        public function on ($event_name, $callback) :NULL {}
-        public function start () :NULL {}
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $mode
+         * @param  $sock_type
+         * @return mixed
+         */
         public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) :NULL {}
-        public function addlistener ($host, $port, $sock_type) :NULL {}
-        public function set (array $settings) :NULL {}
-        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
-        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
-        public function sendwait ($conn_fd, $send_data) :NULL {}
-        public function exist ($fd) :NULL {}
-        public function protect ($fd, $is_protected = NULL) :NULL {}
-        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
-        public function close ($fd, $reset = NULL) :NULL {}
-        public function confirm ($fd) :NULL {}
-        public function pause ($fd) :NULL {}
-        public function resume ($fd) :NULL {}
-        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
-        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
-        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
-        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
-        public function finish ($data) :NULL {}
-        public function reload () :NULL {}
-        public function shutdown () :NULL {}
-        public function stop ($worker_id = NULL) :NULL {}
-        public function getLastError () :NULL {}
-        public function heartbeat ($reactor_id) :NULL {}
-        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
-        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
-        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
-        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
-        public function after ($ms, $callback, $param = NULL) :NULL {}
-        public function tick ($ms, $callback) :NULL {}
-        public function clearTimer ($timer_id) :NULL {}
-        public function defer ($callback) :NULL {}
-        public function sendMessage ($message, $dst_worker_id) :NULL {}
-        public function addProcess (\swoole_process $process) :NULL {}
-        public function stats () :NULL {}
-        public function bind ($fd, $uid) :NULL {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function listen ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function addlistener ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $event_name
+         * @param callable $callback
+         * @return mixed
+         */
+        public function on ($event_name, $callback) {}
+
+        /**
+         * @param  $event_name
+         * @return mixed
+         */
+        public function getCallback ($event_name) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @param  $fd
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function send ($fd, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $ip
+         * @param  $port
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $send_data
+         * @return mixed
+         */
+        public function sendwait ($conn_fd, $send_data) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exists ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exist ($fd) {}
+
+        /**
+         * @param  $fd
+         * @param  $is_protected
+         * @return mixed
+         */
+        public function protect ($fd, $is_protected = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reset
+         * @return mixed
+         */
+        public function close ($fd, $reset = NULL) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function confirm ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function pause ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function resume ($fd) {}
+
+        /**
+         * @param  $data
+         * @param  $worker_id
+         * @param callable $finish_callback
+         * @return mixed
+         */
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskWaitMulti ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskCo ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function finish ($data) {}
+
+        /**
+         * @return mixed
+         */
+        public function reload () {}
+
+        /**
+         * @return mixed
+         */
+        public function shutdown () {}
+
+        /**
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function stop ($worker_id = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getLastError () {}
+
+        /**
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function heartbeat ($reactor_id) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function getClientInfo ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function getClientList ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function connection_info ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function connection_list ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $message
+         * @param  $dst_worker_id
+         * @return mixed
+         */
+        public function sendMessage ($message, $dst_worker_id) {}
+
+        /**
+         * @param swoole_process $process
+         * @return mixed
+         */
+        public function addProcess ($process) {}
+
+        /**
+         * @return mixed
+         */
+        public function stats () {}
+
+        /**
+         * @param  $port
+         * @return mixed
+         */
+        public function getSocket ($port = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $uid
+         * @return mixed
+         */
+        public function bind ($fd, $uid) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function after ($ms, $callback) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function tick ($ms, $callback) {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public function clearTimer ($timer_id) {}
+
+        /**
+         * @param callable $callback
+         * @return mixed
+         */
+        public function defer ($callback) {}
+
     }
 }
 
-namespace Swoole\Http {
-    class Response {
+namespace Swoole\Server {
+    final class Task {
 
-        public $fd;
-        public $header;
-        public $cookie;
-        public $trailer;
+        public $data;
+        public $id;
+        public $worker_id;
+        public $flags;
 
-        public function initHeader () :NULL {}
-        public function cookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL) :NULL {}
-        public function rawcookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL) :NULL {}
-        public function status ($http_code, $reason = NULL) :NULL {}
-        public function gzip ($compress_level = NULL) :NULL {}
-        public function header ($key, $value, $ucwords = NULL) :NULL {}
-        public function write ($content) :NULL {}
-        public function end ($content = NULL) :NULL {}
-        public function sendfile ($filename, $offset = NULL, $length = NULL) :NULL {}
-        public function redirect ($location, $http_code = NULL) :NULL {}
-        public function detach () :NULL {}
-        public static function create ($fd) :NULL {}
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function finish ($data) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public static function pack ($data) {}
+
+    }
+}
+
+namespace Swoole\Connection {
+    class Iterator {
+
+        /**
+         * @return mixed
+         */
+        public function __construct () {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
+
+        /**
+         * @return mixed
+         */
+        public function rewind () {}
+
+        /**
+         * @return mixed
+         */
+        public function next () {}
+
+        /**
+         * @return mixed
+         */
+        public function current () {}
+
+        /**
+         * @return mixed
+         */
+        public function key () {}
+
+        /**
+         * @return mixed
+         */
+        public function valid () {}
+
+        /**
+         * @return mixed
+         */
+        public function count () {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function offsetExists ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function offsetGet ($fd) {}
+
+        /**
+         * @param  $fd
+         * @param  $value
+         * @return mixed
+         */
+        public function offsetSet ($fd, $value) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function offsetUnset ($fd) {}
+
+    }
+}
+
+namespace Swoole\Server {
+    class Port {
+
+        private $onConnect;
+        private $onReceive;
+        private $onClose;
+        private $onPacket;
+        private $onBufferFull;
+        private $onBufferEmpty;
+        private $onRequest;
+        private $onHandShake;
+        private $onOpen;
+        private $onMessage;
+        public $host;
+        public $port;
+        public $type;
+        public $sock;
+        public $setting;
+        public $connections;
+
+        /**
+         * @return mixed
+         */
+        private function __construct () {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @param  $event_name
+         * @param callable $callback
+         * @return mixed
+         */
+        public function on ($event_name, $callback) {}
+
+        /**
+         * @param  $event_name
+         * @return mixed
+         */
+        public function getCallback ($event_name) {}
+
+        /**
+         * @return mixed
+         */
+        public function getSocket () {}
+
     }
 }
 
@@ -993,57 +4869,201 @@ namespace Swoole\Http {
     class Request {
 
         public $fd;
+        public $streamId;
         public $header;
         public $server;
-        public $request;
         public $cookie;
         public $get;
         public $files;
         public $post;
         public $tmpfiles;
 
-        public function rawcontent () :NULL {}
-        public function getData () :NULL {}
+        /**
+         * @return mixed
+         */
+        public function rawContent () {}
+
+        /**
+         * @return mixed
+         */
+        public function getData () {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
+
     }
 }
 
-namespace Swoole {
-    class Buffer {
+namespace Swoole\Http {
+    class Response {
 
-        public function __construct ($size = NULL) {}
+        public $fd;
+        public $socket;
+        public $header;
+        public $cookie;
+        public $trailer;
+
+        /**
+         * @return mixed
+         */
+        public function initHeader () {}
+
+        /**
+         * @param  $name
+         * @param  $value
+         * @param  $expires
+         * @param  $path
+         * @param  $domain
+         * @param  $secure
+         * @param  $httponly
+         * @param  $samesite
+         * @return mixed
+         */
+        public function cookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL, $samesite = NULL) {}
+
+        /**
+         * @param  $name
+         * @param  $value
+         * @param  $expires
+         * @param  $path
+         * @param  $domain
+         * @param  $secure
+         * @param  $httponly
+         * @param  $samesite
+         * @return mixed
+         */
+        public function setCookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL, $samesite = NULL) {}
+
+        /**
+         * @param  $name
+         * @param  $value
+         * @param  $expires
+         * @param  $path
+         * @param  $domain
+         * @param  $secure
+         * @param  $httponly
+         * @param  $samesite
+         * @return mixed
+         */
+        public function rawcookie ($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL, $samesite = NULL) {}
+
+        /**
+         * @param  $http_code
+         * @param  $reason
+         * @return mixed
+         */
+        public function status ($http_code, $reason = NULL) {}
+
+        /**
+         * @param  $http_code
+         * @param  $reason
+         * @return mixed
+         */
+        public function setStatusCode ($http_code, $reason = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @param  $ucwords
+         * @return mixed
+         */
+        public function header ($key, $value, $ucwords = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @param  $ucwords
+         * @return mixed
+         */
+        public function setHeader ($key, $value, $ucwords = NULL) {}
+
+        /**
+         * @param  $key
+         * @param  $value
+         * @return mixed
+         */
+        public function trailer ($key, $value) {}
+
+        /**
+         * @return mixed
+         */
+        public function ping () {}
+
+        /**
+         * @param  $content
+         * @return mixed
+         */
+        public function write ($content) {}
+
+        /**
+         * @param  $content
+         * @return mixed
+         */
+        public function end ($content = NULL) {}
+
+        /**
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($filename, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $location
+         * @param  $http_code
+         * @return mixed
+         */
+        public function redirect ($location, $http_code = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function detach () {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public static function create ($fd) {}
+
+        /**
+         * @return mixed
+         */
+        public function upgrade () {}
+
+        /**
+         * @param  $data
+         * @param  $opcode
+         * @param  $flags
+         * @return mixed
+         */
+        public function push ($data, $opcode = NULL, $flags = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function recv () {}
+
+        /**
+         * @return mixed
+         */
+        public function close () {}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function __toString () :NULL {}
-        public function substr ($offset, $length = NULL, $seek = NULL) :NULL {}
-        public function write ($offset, $data) :NULL {}
-        public function read ($offset, $length) :NULL {}
-        public function append ($data) :NULL {}
-        public function expand ($size) :NULL {}
-        public function recycle () :NULL {}
-        public function clear () :NULL {}
+
     }
 }
 
-namespace Swoole\WebSocket {
-    class Server extends \Swoole\Http\Server {
+namespace Swoole\Http {
+    class Server extends \Swoole\Server {
 
-        public $onConnect;
-        public $onReceive;
-        public $onClose;
-        public $onPacket;
-        public $onBufferFull;
-        public $onBufferEmpty;
-        public $onStart;
-        public $onShutdown;
-        public $onWorkerStart;
-        public $onWorkerStop;
-        public $onWorkerExit;
-        public $onWorkerError;
-        public $onTask;
-        public $onFinish;
-        public $onManagerStart;
-        public $onManagerStop;
-        public $onPipeMessage;
+        public $setting;
         public $connections;
         public $host;
         public $port;
@@ -1055,54 +5075,679 @@ namespace Swoole\WebSocket {
         public $worker_id;
         public $taskworker;
         public $worker_pid;
-        public $onRequest;
-        public $onHandshake;
-        public $setting;
+        private $onRequest;
 
-        public function on ($event_name, $callback) :NULL {}
-        public function push ($fd, $data, $opcode = NULL, $finish = NULL) :NULL {}
-        public function disconnect ($fd, $code = NULL, $reason = NULL) :NULL {}
-        public function exist ($fd) :NULL {}
-        public function isEstablished ($fd) :NULL {}
-        public static function pack ($data, $opcode = NULL, $finish = NULL, $mask = NULL) :NULL {}
-        public static function unpack ($data) :NULL {}
-        public function start () :NULL {}
-        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $mode
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) :NULL {}
-        public function addlistener ($host, $port, $sock_type) :NULL {}
-        public function set (array $settings) :NULL {}
-        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
-        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
-        public function sendwait ($conn_fd, $send_data) :NULL {}
-        public function protect ($fd, $is_protected = NULL) :NULL {}
-        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
-        public function close ($fd, $reset = NULL) :NULL {}
-        public function confirm ($fd) :NULL {}
-        public function pause ($fd) :NULL {}
-        public function resume ($fd) :NULL {}
-        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
-        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
-        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
-        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
-        public function finish ($data) :NULL {}
-        public function reload () :NULL {}
-        public function shutdown () :NULL {}
-        public function stop ($worker_id = NULL) :NULL {}
-        public function getLastError () :NULL {}
-        public function heartbeat ($reactor_id) :NULL {}
-        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
-        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
-        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
-        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
-        public function after ($ms, $callback, $param = NULL) :NULL {}
-        public function tick ($ms, $callback) :NULL {}
-        public function clearTimer ($timer_id) :NULL {}
-        public function defer ($callback) :NULL {}
-        public function sendMessage ($message, $dst_worker_id) :NULL {}
-        public function addProcess (\swoole_process $process) :NULL {}
-        public function stats () :NULL {}
-        public function bind ($fd, $uid) :NULL {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function listen ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function addlistener ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $event_name
+         * @param callable $callback
+         * @return mixed
+         */
+        public function on ($event_name, $callback) {}
+
+        /**
+         * @param  $event_name
+         * @return mixed
+         */
+        public function getCallback ($event_name) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @param  $fd
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function send ($fd, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $ip
+         * @param  $port
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $send_data
+         * @return mixed
+         */
+        public function sendwait ($conn_fd, $send_data) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exists ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exist ($fd) {}
+
+        /**
+         * @param  $fd
+         * @param  $is_protected
+         * @return mixed
+         */
+        public function protect ($fd, $is_protected = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reset
+         * @return mixed
+         */
+        public function close ($fd, $reset = NULL) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function confirm ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function pause ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function resume ($fd) {}
+
+        /**
+         * @param  $data
+         * @param  $worker_id
+         * @param callable $finish_callback
+         * @return mixed
+         */
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskWaitMulti ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskCo ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function finish ($data) {}
+
+        /**
+         * @return mixed
+         */
+        public function reload () {}
+
+        /**
+         * @return mixed
+         */
+        public function shutdown () {}
+
+        /**
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function stop ($worker_id = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getLastError () {}
+
+        /**
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function heartbeat ($reactor_id) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function getClientInfo ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function getClientList ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function connection_info ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function connection_list ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $message
+         * @param  $dst_worker_id
+         * @return mixed
+         */
+        public function sendMessage ($message, $dst_worker_id) {}
+
+        /**
+         * @param swoole_process $process
+         * @return mixed
+         */
+        public function addProcess ($process) {}
+
+        /**
+         * @return mixed
+         */
+        public function stats () {}
+
+        /**
+         * @param  $port
+         * @return mixed
+         */
+        public function getSocket ($port = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $uid
+         * @return mixed
+         */
+        public function bind ($fd, $uid) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function after ($ms, $callback) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function tick ($ms, $callback) {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public function clearTimer ($timer_id) {}
+
+        /**
+         * @param callable $callback
+         * @return mixed
+         */
+        public function defer ($callback) {}
+
+    }
+}
+
+namespace Swoole\Coroutine\Http {
+    final class Server {
+
+        public $fd;
+        public $host;
+        public $port;
+        public $ssl;
+        public $settings;
+        public $errCode;
+        public $errMsg;
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $ssl
+         * @param  $reuse_port
+         * @return mixed
+         */
+        public function __construct ($host, $port = NULL, $ssl = NULL, $reuse_port = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @param  $pattern
+         * @param callable $callback
+         * @return mixed
+         */
+        public function handle ($pattern, $callback) {}
+
+        /**
+         * @return mixed
+         */
+        public function onAccept () {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @return mixed
+         */
+        public function shutdown () {}
+
+    }
+}
+
+namespace Swoole\WebSocket {
+    class Server extends \Swoole\Http\Server {
+
+        public $setting;
+        public $connections;
+        public $host;
+        public $port;
+        public $type;
+        public $mode;
+        public $ports;
+        public $master_pid;
+        public $manager_pid;
+        public $worker_id;
+        public $taskworker;
+        public $worker_pid;
+        private $onHandshake;
+
+        /**
+         * @param  $fd
+         * @param  $data
+         * @param  $opcode
+         * @param  $flags
+         * @return mixed
+         */
+        public function push ($fd, $data, $opcode = NULL, $flags = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $code
+         * @param  $reason
+         * @return mixed
+         */
+        public function disconnect ($fd, $code = NULL, $reason = NULL) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function isEstablished ($fd) {}
+
+        /**
+         * @param  $data
+         * @param  $opcode
+         * @param  $flags
+         * @return mixed
+         */
+        public static function pack ($data, $opcode = NULL, $flags = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public static function unpack ($data) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $mode
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
+        public function __destruct () {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function listen ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function addlistener ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $event_name
+         * @param callable $callback
+         * @return mixed
+         */
+        public function on ($event_name, $callback) {}
+
+        /**
+         * @param  $event_name
+         * @return mixed
+         */
+        public function getCallback ($event_name) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @param  $fd
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function send ($fd, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $ip
+         * @param  $port
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $send_data
+         * @return mixed
+         */
+        public function sendwait ($conn_fd, $send_data) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exists ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exist ($fd) {}
+
+        /**
+         * @param  $fd
+         * @param  $is_protected
+         * @return mixed
+         */
+        public function protect ($fd, $is_protected = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reset
+         * @return mixed
+         */
+        public function close ($fd, $reset = NULL) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function confirm ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function pause ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function resume ($fd) {}
+
+        /**
+         * @param  $data
+         * @param  $worker_id
+         * @param callable $finish_callback
+         * @return mixed
+         */
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskWaitMulti ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskCo ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function finish ($data) {}
+
+        /**
+         * @return mixed
+         */
+        public function reload () {}
+
+        /**
+         * @return mixed
+         */
+        public function shutdown () {}
+
+        /**
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function stop ($worker_id = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getLastError () {}
+
+        /**
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function heartbeat ($reactor_id) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function getClientInfo ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function getClientList ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function connection_info ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function connection_list ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $message
+         * @param  $dst_worker_id
+         * @return mixed
+         */
+        public function sendMessage ($message, $dst_worker_id) {}
+
+        /**
+         * @param swoole_process $process
+         * @return mixed
+         */
+        public function addProcess ($process) {}
+
+        /**
+         * @return mixed
+         */
+        public function stats () {}
+
+        /**
+         * @param  $port
+         * @return mixed
+         */
+        public function getSocket ($port = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $uid
+         * @return mixed
+         */
+        public function bind ($fd, $uid) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function after ($ms, $callback) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function tick ($ms, $callback) {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public function clearTimer ($timer_id) {}
+
+        /**
+         * @param callable $callback
+         * @return mixed
+         */
+        public function defer ($callback) {}
+
     }
 }
 
@@ -1112,11 +5757,28 @@ namespace Swoole\WebSocket {
         public $fd;
         public $data;
         public $opcode;
+        public $flags;
         public $finish;
 
-        public function __toString () :NULL {}
-        public static function pack ($data, $opcode = NULL, $finish = NULL, $mask = NULL) :NULL {}
-        public static function unpack ($data) :NULL {}
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
+
+        /**
+         * @param  $data
+         * @param  $opcode
+         * @param  $flags
+         * @return mixed
+         */
+        public static function pack ($data, $opcode = NULL, $flags = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public static function unpack ($data) {}
+
     }
 }
 
@@ -1125,156 +5787,31 @@ namespace Swoole\WebSocket {
 
         public $fd;
         public $data;
+        public $flags;
         public $finish;
         public $opcode;
         public $code;
         public $reason;
 
-        public function __toString () :NULL {}
-        public static function pack ($data, $opcode = NULL, $finish = NULL, $mask = NULL) :NULL {}
-        public static function unpack ($data) :NULL {}
-    }
-}
+        /**
+         * @return mixed
+         */
+        public function __toString () {return "";}
 
-namespace Swoole {
-    class MySQL {
-        const STATE_QUERY = 0;
-        const STATE_READ_START = 1;
-        const STATE_READ_FIELD  = 2;
-        const STATE_READ_ROW = 3;
-        const STATE_READ_END = 5;
-        const STATE_CLOSED = 6;
+        /**
+         * @param  $data
+         * @param  $opcode
+         * @param  $flags
+         * @return mixed
+         */
+        public static function pack ($data, $opcode = NULL, $flags = NULL) {}
 
-        public $serverInfo;
-        public $sock;
-        public $connected;
-        public $errno;
-        public $connect_errno;
-        public $error;
-        public $connect_error;
-        public $insert_id;
-        public $affected_rows;
-        public $onConnect;
-        public $onClose;
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public static function unpack ($data) {}
 
-        public function __construct () {}
-        public function __destruct () {}
-        public function connect (array $server_config, $callback) :NULL {}
-        public function begin ($callback) :NULL {}
-        public function commit ($callback) :NULL {}
-        public function rollback ($callback) :NULL {}
-        public function query ($sql, $callback) :NULL {}
-        public function close () :NULL {}
-        public function getState () :NULL {}
-        public function on ($event_name, $callback) :NULL {}
-    }
-}
-
-namespace Swoole\MySQL {
-    class Exception extends \Exception {
-
-        protected $message;
-        protected $code;
-        protected $file;
-        protected $line;
-
-        public function __construct ($message = NULL, $code = NULL, $previous = NULL) {}
-        public function __wakeup () :NULL {}
-        public function __toString () :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Mmap {
-
-        public static function open ($filename, $size = NULL, $offset = NULL) :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Channel {
-
-        public function __construct ($size) {}
-        public function __destruct () {}
-        public function push ($data) :NULL {}
-        public function pop () :NULL {}
-        public function peek () :NULL {}
-        public function stats () :NULL {}
-    }
-}
-
-namespace Swoole\Coroutine {
-    class Channel {
-
-        public $capacity;
-        public $errCode;
-
-        public function __construct ($size = NULL) {}
-        public function __destruct () {}
-        public function push ($data) :NULL {}
-        public function pop ($timeout) :NULL {}
-        public function isEmpty () :NULL {}
-        public function isFull () :NULL {}
-        public function close () :NULL {}
-        public function stats () :NULL {}
-        public function length () :NULL {}
-    }
-}
-
-namespace Swoole {
-    class RingQueue {
-
-        public function __construct ($len) {}
-        public function __destruct () {}
-        public function push ($data) :NULL {}
-        public function pop () :NULL {}
-        public function count () :NULL {}
-        public function isFull () :NULL {}
-        public function isEmpty () :NULL {}
-    }
-}
-
-namespace Swoole {
-    class MsgQueue {
-
-        public function __construct ($len) {}
-        public function __destruct () {}
-        public function push ($data, $type = NULL) :NULL {}
-        public function pop ($type = NULL) :NULL {}
-        public function setBlocking ($blocking) :NULL {}
-        public function stats () :NULL {}
-        public function destory () :NULL {}
-    }
-}
-
-namespace Swoole {
-    class Serialize {
-
-        public static function pack ($data, $flag = NULL) :NULL {}
-        public static function unpack ($string, $args = NULL) :NULL {}
-    }
-}
-
-namespace Swoole\Memory {
-    class Pool {
-        const TYPE_RING = 1;
-        const TYPE_GLOBAL = 2;
-        const TYPE_FIXED = 0;
-        const TYPE_MALLOC = 3;
-        const TYPE_EMALLOC = 4;
-
-        public function __construct ($size, $type, $slice_size = NULL, $shared = NULL) {}
-        public function __destruct () {}
-        public function alloc ($size = NULL) :NULL {}
-    }
-}
-
-namespace Swoole\Memory\Pool {
-    class Slice {
-
-        public function read ($size = NULL, $offset = NULL) :NULL {}
-        public function write ($data, $offset = NULL) :NULL {}
-        public function __destruct () {}
     }
 }
 
@@ -1288,23 +5825,6 @@ namespace Swoole\Redis {
         const SET = 5;
         const MAP = 6;
 
-        public $onConnect;
-        public $onReceive;
-        public $onClose;
-        public $onPacket;
-        public $onBufferFull;
-        public $onBufferEmpty;
-        public $onStart;
-        public $onShutdown;
-        public $onWorkerStart;
-        public $onWorkerStop;
-        public $onWorkerExit;
-        public $onWorkerError;
-        public $onTask;
-        public $onFinish;
-        public $onManagerStart;
-        public $onManagerStop;
-        public $onPipeMessage;
         public $setting;
         public $connections;
         public $host;
@@ -1318,47 +5838,305 @@ namespace Swoole\Redis {
         public $taskworker;
         public $worker_pid;
 
-        public function start () :NULL {}
-        public function setHandler ($command, $callback, $number_of_string_param = NULL, $type_of_array_param = NULL) :NULL {}
-        public static function format ($type, $value = NULL) :NULL {}
-        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {}
+        /**
+         * @return mixed
+         */
+        public function start () {}
+
+        /**
+         * @param  $command
+         * @param callable $callback
+         * @return mixed
+         */
+        public function setHandler ($command, $callback) {}
+
+        /**
+         * @param  $command
+         * @return mixed
+         */
+        public function getHandler ($command) {}
+
+        /**
+         * @param  $type
+         * @param  $value
+         * @return mixed
+         */
+        public static function format ($type, $value = NULL) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $mode
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function __construct ($host, $port = NULL, $mode = NULL, $sock_type = NULL) {parent::__construct();}
+
+        /**
+         * @return mixed
+         */
         public function __destruct () {}
-        public function listen ($host, $port, $sock_type) :NULL {}
-        public function addlistener ($host, $port, $sock_type) :NULL {}
-        public function on ($event_name, $callback) :NULL {}
-        public function set (array $settings) :NULL {}
-        public function send ($fd, $send_data, $reactor_id = NULL) :NULL {}
-        public function sendto ($ip, $port, $send_data, $server_socket = NULL) :NULL {}
-        public function sendwait ($conn_fd, $send_data) :NULL {}
-        public function exist ($fd) :NULL {}
-        public function protect ($fd, $is_protected = NULL) :NULL {}
-        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) :NULL {}
-        public function close ($fd, $reset = NULL) :NULL {}
-        public function confirm ($fd) :NULL {}
-        public function pause ($fd) :NULL {}
-        public function resume ($fd) :NULL {}
-        public function task ($data, $worker_id = NULL, $finish_callback = NULL) :NULL {}
-        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) :NULL {}
-        public function taskWaitMulti (array $tasks, $timeout = NULL) :NULL {}
-        public function taskCo (array $tasks, $timeout = NULL) :NULL {}
-        public function finish ($data) :NULL {}
-        public function reload () :NULL {}
-        public function shutdown () :NULL {}
-        public function stop ($worker_id = NULL) :NULL {}
-        public function getLastError () :NULL {}
-        public function heartbeat ($reactor_id) :NULL {}
-        public function connection_info ($fd, $reactor_id = NULL) :NULL {}
-        public function connection_list ($start_fd, $find_count = NULL) :NULL {}
-        public function getClientInfo ($fd, $reactor_id = NULL) :NULL {}
-        public function getClientList ($start_fd, $find_count = NULL) :NULL {}
-        public function after ($ms, $callback, $param = NULL) :NULL {}
-        public function tick ($ms, $callback) :NULL {}
-        public function clearTimer ($timer_id) :NULL {}
-        public function defer ($callback) :NULL {}
-        public function sendMessage ($message, $dst_worker_id) :NULL {}
-        public function addProcess (\swoole_process $process) :NULL {}
-        public function stats () :NULL {}
-        public function bind ($fd, $uid) :NULL {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function listen ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $host
+         * @param  $port
+         * @param  $sock_type
+         * @return mixed
+         */
+        public function addlistener ($host, $port, $sock_type) {}
+
+        /**
+         * @param  $event_name
+         * @param callable $callback
+         * @return mixed
+         */
+        public function on ($event_name, $callback) {}
+
+        /**
+         * @param  $event_name
+         * @return mixed
+         */
+        public function getCallback ($event_name) {}
+
+        /**
+         * @param array $settings
+         * @return mixed
+         */
+        public function set ($settings) {}
+
+        /**
+         * @param  $fd
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function send ($fd, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $ip
+         * @param  $port
+         * @param  $send_data
+         * @param  $server_socket
+         * @return mixed
+         */
+        public function sendto ($ip, $port, $send_data, $server_socket = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $send_data
+         * @return mixed
+         */
+        public function sendwait ($conn_fd, $send_data) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exists ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function exist ($fd) {}
+
+        /**
+         * @param  $fd
+         * @param  $is_protected
+         * @return mixed
+         */
+        public function protect ($fd, $is_protected = NULL) {}
+
+        /**
+         * @param  $conn_fd
+         * @param  $filename
+         * @param  $offset
+         * @param  $length
+         * @return mixed
+         */
+        public function sendfile ($conn_fd, $filename, $offset = NULL, $length = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reset
+         * @return mixed
+         */
+        public function close ($fd, $reset = NULL) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function confirm ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function pause ($fd) {}
+
+        /**
+         * @param  $fd
+         * @return mixed
+         */
+        public function resume ($fd) {}
+
+        /**
+         * @param  $data
+         * @param  $worker_id
+         * @param callable $finish_callback
+         * @return mixed
+         */
+        public function task ($data, $worker_id = NULL, $finish_callback = NULL) {}
+
+        /**
+         * @param  $data
+         * @param  $timeout
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function taskwait ($data, $timeout = NULL, $worker_id = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskWaitMulti ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param array $tasks
+         * @param  $timeout
+         * @return mixed
+         */
+        public function taskCo ($tasks, $timeout = NULL) {}
+
+        /**
+         * @param  $data
+         * @return mixed
+         */
+        public function finish ($data) {}
+
+        /**
+         * @return mixed
+         */
+        public function reload () {}
+
+        /**
+         * @return mixed
+         */
+        public function shutdown () {}
+
+        /**
+         * @param  $worker_id
+         * @return mixed
+         */
+        public function stop ($worker_id = NULL) {}
+
+        /**
+         * @return mixed
+         */
+        public function getLastError () {}
+
+        /**
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function heartbeat ($reactor_id) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function getClientInfo ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function getClientList ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $reactor_id
+         * @return mixed
+         */
+        public function connection_info ($fd, $reactor_id = NULL) {}
+
+        /**
+         * @param  $start_fd
+         * @param  $find_count
+         * @return mixed
+         */
+        public function connection_list ($start_fd, $find_count = NULL) {}
+
+        /**
+         * @param  $message
+         * @param  $dst_worker_id
+         * @return mixed
+         */
+        public function sendMessage ($message, $dst_worker_id) {}
+
+        /**
+         * @param swoole_process $process
+         * @return mixed
+         */
+        public function addProcess ($process) {}
+
+        /**
+         * @return mixed
+         */
+        public function stats () {}
+
+        /**
+         * @param  $port
+         * @return mixed
+         */
+        public function getSocket ($port = NULL) {}
+
+        /**
+         * @param  $fd
+         * @param  $uid
+         * @return mixed
+         */
+        public function bind ($fd, $uid) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function after ($ms, $callback) {}
+
+        /**
+         * @param  $ms
+         * @param callable $callback
+         * @return mixed
+         */
+        public function tick ($ms, $callback) {}
+
+        /**
+         * @param  $timer_id
+         * @return mixed
+         */
+        public function clearTimer ($timer_id) {}
+
+        /**
+         * @param callable $callback
+         * @return mixed
+         */
+        public function defer ($callback) {}
+
     }
 }
 
